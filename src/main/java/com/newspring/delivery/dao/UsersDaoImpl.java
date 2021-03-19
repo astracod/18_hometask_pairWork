@@ -1,10 +1,7 @@
 package com.newspring.delivery.dao;
 
 
-import com.newspring.delivery.entities.ChangeRoleOnUser;
-import com.newspring.delivery.entities.Role;
-import com.newspring.delivery.entities.User;
-import com.newspring.delivery.entities.UserWithRole;
+import com.newspring.delivery.entities.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -34,8 +31,45 @@ public class UsersDaoImpl implements UsersDao {
             "  and (r.id = :roleId or cast (:roleId as bigint) is null)";
     public static final String UPDATE_ROLE = "update users as u set role_id = :roleId where u.id = :id";
 
+    public static final String CREATE_ORDER = "insert into orders(author_user_id, executor_user_id, price, name, description, address, status_id)" +
+            " VALUES (:authorUserId, :executorUserId, :price, :name, :description, :address, :statusId)";
+    public static final String CHANGE_ORDER = "update orders\n" +
+            "set    name=:name,\n" +
+            "    description=:description,\n" +
+            "    address =:address\n" +
+            "where id = :orderId and status_id = 1";
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
+
+    @Override
+    public void createOrder(Order order) {
+        try {
+            jdbcTemplate.update(
+                    CREATE_ORDER,
+                    new BeanPropertySqlParameterSource(order));
+        } catch (Exception e) {
+            log.error("error in createOrder / UsersDaoImpl {}", e.getMessage(), e);
+        }
+    }
+
+
+
+    @Override
+    public void changeOrder(ChangeOrder changeOrder) {
+        try {
+            int a =  jdbcTemplate.update(
+                    CHANGE_ORDER,
+                    new BeanPropertySqlParameterSource(changeOrder));
+            if (a == 0){
+                log.info("Order cannot be changed");
+            }else {
+                log.info("Change order successfully implemented");
+            }
+        } catch (Exception e) {
+            log.error("Error in changeOrder / UsersDaoImpl {}", e.getMessage(), e);
+        }
+    }
 
     @Override
     public List<User> getAll() {

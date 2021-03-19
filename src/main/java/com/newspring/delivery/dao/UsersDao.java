@@ -1,13 +1,13 @@
 package com.newspring.delivery.dao;
 
-import com.newspring.delivery.entities.ChangeRoleOnUser;
-import com.newspring.delivery.entities.Role;
-import com.newspring.delivery.entities.User;
-import com.newspring.delivery.entities.UserWithRole;
+import com.newspring.delivery.entities.*;
 
 import java.util.List;
 
 public interface UsersDao {
+    void createOrder(Order order);
+
+    void changeOrder(ChangeOrder changeOrder);
 
     List<User> getAll();
 

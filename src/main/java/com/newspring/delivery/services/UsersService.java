@@ -2,14 +2,13 @@ package com.newspring.delivery.services;
 
 import com.newspring.delivery.dao.UsersDaoImpl;
 import com.newspring.delivery.dto.options_with_user.GetAllRolesResponse;
-import com.newspring.delivery.entities.ChangeRoleOnUser;
-import com.newspring.delivery.entities.User;
-import com.newspring.delivery.entities.UserWithRole;
+import com.newspring.delivery.entities.*;
 import com.newspring.delivery.exceptions.ValidationException;
 import com.newspring.delivery.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,10 +19,12 @@ import java.util.List;
 public class UsersService {
     private final UsersDaoImpl usersDao;
     private final UserMapper userMapper;
-
+    private final PasswordEncoder passwordEncoder;
 
     public void addUserDao(User user) {
         try {
+            String hash = passwordEncoder.encode(user.getPassword());
+            user.setPassword(hash);
             usersDao.add(user);
         } catch (Exception e) {
             log.error("ERROR ADD USER IN Service {}", e.getMessage());
@@ -49,6 +50,23 @@ public class UsersService {
             throw new ValidationException(" Search parameters not passed");
         }
         return usersDao.getAllUsersByRoleAndLoginStart(role, loginStart);
+    }
+
+    public void createOrder(Order order){
+
+        try{
+            usersDao.createOrder(order);
+        }catch (Exception e){
+            log.info(" Error create order in service {}", e.getMessage(),e);
+        }
+    }
+
+    public void changeOrder(ChangeOrder order){
+        try {
+            usersDao.changeOrder(order);
+        }catch (Exception e){
+            log.info(" Error change order in service {}", e.getMessage(),e);
+        }
     }
 
 }

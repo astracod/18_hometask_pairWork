@@ -2,7 +2,9 @@ package com.newspring.delivery.controllers;
 
 import com.newspring.delivery.dto.common.OnlyStatusResponse;
 import com.newspring.delivery.dto.options_with_user.*;
+import com.newspring.delivery.entities.ChangeOrder;
 import com.newspring.delivery.entities.ChangeRoleOnUser;
+import com.newspring.delivery.entities.Order;
 import com.newspring.delivery.mappers.UserMapper;
 import com.newspring.delivery.services.UsersService;
 import lombok.RequiredArgsConstructor;
@@ -78,9 +80,45 @@ public class UsersController {
             return response;
         }
     }
+
+    @PostMapping("/create")
+    public OnlyStatusResponse createOrder(@RequestBody Order order) {
+        OnlyStatusResponse res = new OnlyStatusResponse();
+        try {
+            usersService.createOrder(order);
+            res.setStatus(OnlyStatusResponse.Status.OK);
+            res.setMessage(" -> заявка созданна");
+        } catch (Exception e) {
+            log.error("ERROR create order in Controller {}", e.getMessage(), e);
+            res.setStatus(OnlyStatusResponse.Status.FAIL);
+            res.setMessage(e.getMessage());
+        }
+        return res;
+    }
+
+    @PutMapping("/change")
+    public OnlyStatusResponse changeOrder(@RequestBody ChangeOrder order) {
+
+        OnlyStatusResponse res = new OnlyStatusResponse();
+
+        try {
+            usersService.changeOrder(order);
+            res.setStatus(OnlyStatusResponse.Status.OK);
+            res.setMessage(" -> заявка обновлена");
+        } catch (Exception e) {
+            log.error("ERROR change order in Controller {}", e.getMessage(), e);
+            res.setStatus(OnlyStatusResponse.Status.FAIL);
+            res.setMessage(e.getMessage());
+        }
+        return res;
+    }
+
 }
 // Запросы for Bash:
 // 1) curl -XPOST http://localhost:8080/users/add -H"Content-Type:application/json" -d'{"login":"Dima","password":"369852","roleId":2,"phone":"222111"}'
 // 2) curl -XGET http://localhost:8080/users/roles
 // 3) curl -XGET http://localhost:8080/users/part?role=2&login=A
+// Запросы в идеи
 // 4) curl -XPOST http://localhost:8080/users/up -H"Content-Type:application/json" -d"{\"id\":2,\"roleId\":2}" для консоли идеи.Разница во внешних кавычках.
+// 5) curl -XPOST http://localhost:8080/users/create -H"Content-Type:application/json" -d"{\"authorUserId\":1,\"executorUserId\":null,\"price\":150,\"name\":\"Marlboro Gold\",\"description\":\"medium nicotine cigarettes\",\"address\":\"Essentuki, Kalinina 2\",\"statusId\":1}"
+// 6) curl -XPOST http://localhost:8080/users/change -H"Content-Type:application/json" -d"{\"authorUserId\":2,\"name\":\"Milk\",\"description\":\"white milk\",\"address\":\"Kislovodsk, Vernadsky 5\",\"statusId\":1}"
