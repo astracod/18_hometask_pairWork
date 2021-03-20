@@ -21,7 +21,7 @@ public class UsersService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public void addUserDao(User user) {
+    public void addUser(User user) {
         try {
             String hash = passwordEncoder.encode(user.getPassword());
             user.setPassword(hash);
@@ -31,11 +31,12 @@ public class UsersService {
             e.printStackTrace();
         }
     }
-    public void updateRole(ChangeRoleOnUser role){
-        try{
+
+    public void updateRole(ChangeRoleOnUser role) {
+        try {
             usersDao.roleChange(role);
-        }catch (Exception e){
-            log.error("ERROR UPDATE ROLE IN SERVICE {}", e.getMessage(),e);
+        } catch (Exception e) {
+            log.error("ERROR UPDATE ROLE IN SERVICE {}", e.getMessage(), e);
         }
     }
 
@@ -52,21 +53,33 @@ public class UsersService {
         return usersDao.getAllUsersByRoleAndLoginStart(role, loginStart);
     }
 
-    public void createOrder(Order order){
+    public void createOrder(Order order) {
 
-        try{
+        try {
             usersDao.createOrder(order);
-        }catch (Exception e){
-            log.info(" Error create order in service {}", e.getMessage(),e);
+        } catch (Exception e) {
+            log.info(" Error create order in service {}", e.getMessage(), e);
         }
     }
 
-    public void changeOrder(ChangeOrder order){
+    public void changeOrder(ChangeOrder order) {
         try {
             usersDao.changeOrder(order);
-        }catch (Exception e){
-            log.info(" Error change order in service {}", e.getMessage(),e);
+        } catch (Exception e) {
+            log.info(" Error change order in service {}", e.getMessage(), e);
         }
+    }
+
+    public void removeOrder(DeleteOrder deleteOrder) {
+        try {
+            usersDao.remoteOrder(deleteOrder);
+        } catch (Exception e) {
+            log.info(" Error remove order in service {}", e.getMessage(), e);
+        }
+    }
+
+    public List<AdvancedOrderResponse> advancedOrderSearch(AdvancedOrder advancedOrder) {
+        return usersDao.advancedOrderSearch(advancedOrder);
     }
 
 }

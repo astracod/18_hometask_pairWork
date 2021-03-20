@@ -9,7 +9,9 @@ public interface UsersDao {
 
     void changeOrder(ChangeOrder changeOrder);
 
-    List<User> getAll();
+    List<AdvancedOrderResponse> advancedOrderSearch(AdvancedOrder advancedOrder);
+
+    void remoteOrder(DeleteOrder deleteOrder);
 
     void add(User user);
 

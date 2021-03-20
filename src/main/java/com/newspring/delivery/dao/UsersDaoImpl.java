@@ -38,6 +38,11 @@ public class UsersDaoImpl implements UsersDao {
             "    description=:description,\n" +
             "    address =:address\n" +
             "where id = :orderId and status_id = 1";
+    public static final String DELETE_FROM_ORDERS_WHERE_ID_ORDER_ID = "DELETE FROM orders WHERE id = :orderId";
+    public static final String ADVANCE_ORDER = "select name,description,address,price from orders " +
+            "where (name like :name or cast(:name as varchar(255)) is null)" +
+            " and (description like :description or cast(:description as varchar(255)) is null)" +
+            " and (address like :address or cast(:address as varchar(255)) is null)";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -54,16 +59,15 @@ public class UsersDaoImpl implements UsersDao {
     }
 
 
-
     @Override
     public void changeOrder(ChangeOrder changeOrder) {
         try {
-            int a =  jdbcTemplate.update(
+            int a = jdbcTemplate.update(
                     CHANGE_ORDER,
                     new BeanPropertySqlParameterSource(changeOrder));
-            if (a == 0){
+            if (a == 0) {
                 log.info("Order cannot be changed");
-            }else {
+            } else {
                 log.info("Change order successfully implemented");
             }
         } catch (Exception e) {
@@ -71,9 +75,18 @@ public class UsersDaoImpl implements UsersDao {
         }
     }
 
+
     @Override
-    public List<User> getAll() {
-        return null;
+    public void remoteOrder(DeleteOrder deleteOrder) {
+        try {
+            int a = jdbcTemplate.update(DELETE_FROM_ORDERS_WHERE_ID_ORDER_ID,
+                    new BeanPropertySqlParameterSource(deleteOrder));
+            log.info("Delete in UserDaoImpl implemented");
+        } catch (Exception e) {
+            log.info("Error in Delete method / UserDaoImpl : {} ", e.getMessage(), e);
+        }
+
+
     }
 
     @Override
@@ -82,7 +95,7 @@ public class UsersDaoImpl implements UsersDao {
             jdbcTemplate.update(UPDATE_ROLE,
                     new BeanPropertySqlParameterSource(role));
             log.info("update in UserDaoImpl implemented");
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(" error in update role in  roleChange / UsersDaoImpl");
         }
     }
@@ -114,6 +127,18 @@ public class UsersDaoImpl implements UsersDao {
                         .addValue("roleId", role)
                 ,
                 new BeanPropertyRowMapper<>(UserWithRole.class));
+    }
+
+
+    @Override
+    public List<AdvancedOrderResponse> advancedOrderSearch(AdvancedOrder advancedOrder) {
+        log.info(" входные данные : {}", advancedOrder);
+        return jdbcTemplate.query(ADVANCE_ORDER,
+                new MapSqlParameterSource("name", advancedOrder.getName() == null ? null : "%" + advancedOrder.getName() + "%")
+                        .addValue("description", advancedOrder.getDescription() == null ? null : "%" + advancedOrder.getDescription() + "%")
+                        .addValue("address", advancedOrder.getAddress() == null ? null : "%" + advancedOrder.getAddress() + "%"),
+                new BeanPropertyRowMapper<>(AdvancedOrderResponse.class)
+        );
     }
 }
 

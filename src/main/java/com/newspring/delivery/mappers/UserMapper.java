@@ -3,10 +3,9 @@ package com.newspring.delivery.mappers;
 import com.newspring.delivery.dto.options_with_user.*;
 import com.newspring.delivery.dto.options_with_user.simple_dto.RoleDto;
 import com.newspring.delivery.dto.options_with_user.simple_dto.UserDto;
-import com.newspring.delivery.entities.ChangeRoleOnUser;
-import com.newspring.delivery.entities.Role;
-import com.newspring.delivery.entities.User;
-import com.newspring.delivery.entities.UserWithRole;
+import com.newspring.delivery.entities.*;
+
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,8 +18,9 @@ public class UserMapper {
     public User toAddUser(AddUserRequest req) {
         return new User(null, req.getLogin(), req.getPassword(), req.getRoleId(), req.getPhone());
     }
-    public ChangeRoleOnUser toUpdateRole(UserRoleUpdateResponse res ){
-        return new ChangeRoleOnUser(res.getId(),res.getRoleId());
+
+    public ChangeRoleOnUser toUpdateRole(UserRoleUpdateResponse res) {
+        return new ChangeRoleOnUser(res.getId(), res.getRoleId());
     }
 
     public RoleDto toRoleDto(Role role) {
@@ -37,6 +37,25 @@ public class UserMapper {
         dto.setRoleId(user.getRoleId());
         dto.setPhone(user.getPhone());
         return dto;
+    }
+
+    public AdvancedOrderResponse toAdvancedOrder(AdvancedOrderResponse order) {
+        AdvancedOrderResponse res = new AdvancedOrderResponse();
+
+        res.setName(order.getName());
+        res.setDescription(order.getDescription());
+        res.setAddress(order.getAddress());
+        return res;
+    }
+
+    public GetAllAdvancedOrderResponse toGetAllAdvancedOrder(List<AdvancedOrderResponse> orders) {
+        GetAllAdvancedOrderResponse res = new GetAllAdvancedOrderResponse();
+        res.setStatus("OK");
+        res.setOrders(orders.stream()
+        .map(order -> toAdvancedOrder(order))
+                .collect(Collectors.toList())
+        );
+        return res;
     }
 
     public GetAllRolesResponse toAllRolesResponse(List<Role> roles) {
