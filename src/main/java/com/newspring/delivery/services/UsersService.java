@@ -10,6 +10,7 @@ import com.newspring.delivery.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,21 +21,24 @@ import java.util.List;
 public class UsersService {
     private final UsersDaoImpl usersDao;
     private final UserMapper userMapper;
-
+    private final PasswordEncoder passwordEncoder;
 
     public void addUserDao(User user) {
         try {
+            String hash = passwordEncoder.encode(user.getPassword());
+            user.setPassword(hash);
             usersDao.add(user);
         } catch (Exception e) {
             log.error("ERROR ADD USER IN Service {}", e.getMessage());
             e.printStackTrace();
         }
     }
-    public void updateRole(ChangeRoleOnUser role){
-        try{
+
+    public void updateRole(ChangeRoleOnUser role) {
+        try {
             usersDao.roleChange(role);
-        }catch (Exception e){
-            log.error("ERROR UPDATE ROLE IN SERVICE {}", e.getMessage(),e);
+        } catch (Exception e) {
+            log.error("ERROR UPDATE ROLE IN SERVICE {}", e.getMessage(), e);
         }
     }
 
