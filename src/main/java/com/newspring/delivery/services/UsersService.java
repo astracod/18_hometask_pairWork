@@ -79,6 +79,7 @@ public class UsersService {
     }
 
     public List<AdvancedOrderResponse> advancedOrderSearch(AdvancedOrder advancedOrder) {
+        log.info("service : {}",usersDao.advancedOrderSearch(advancedOrder));
         return usersDao.advancedOrderSearch(advancedOrder);
     }
 

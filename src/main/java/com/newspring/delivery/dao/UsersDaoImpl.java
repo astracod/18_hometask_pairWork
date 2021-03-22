@@ -40,9 +40,11 @@ public class UsersDaoImpl implements UsersDao {
             "where id = :orderId and status_id = 1";
     public static final String DELETE_FROM_ORDERS_WHERE_ID_ORDER_ID = "DELETE FROM orders WHERE id = :orderId";
     public static final String ADVANCE_ORDER = "select name,description,address,price from orders " +
-            "where (name like :name or cast(:name as varchar(255)) is null)" +
-            " and (description like :description or cast(:description as varchar(255)) is null)" +
-            " and (address like :address or cast(:address as varchar(255)) is null)";
+            "where ((name like :name or cast(:name as varchar(255)) is null)" +
+            "and (description like :description or cast(:description as varchar(255)) is null))" +
+            "and (address like :address or cast(:address as varchar(255)) is null)" +
+            "and ((price > :minPrice or cast(:minPrice as numeric) is null)" +
+            "and (price < :maxPrice or cast(:maxPrice as numeric) is null))";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -136,7 +138,10 @@ public class UsersDaoImpl implements UsersDao {
         return jdbcTemplate.query(ADVANCE_ORDER,
                 new MapSqlParameterSource("name", advancedOrder.getName() == null ? null : "%" + advancedOrder.getName() + "%")
                         .addValue("description", advancedOrder.getDescription() == null ? null : "%" + advancedOrder.getDescription() + "%")
-                        .addValue("address", advancedOrder.getAddress() == null ? null : "%" + advancedOrder.getAddress() + "%"),
+                        .addValue("address", advancedOrder.getAddress() == null ? null : "%" + advancedOrder.getAddress() + "%")
+                        .addValue("minPrice", advancedOrder.getMinPrice())
+                        .addValue("maxPrice", advancedOrder.getMaxPrice())
+                ,
                 new BeanPropertyRowMapper<>(AdvancedOrderResponse.class)
         );
     }

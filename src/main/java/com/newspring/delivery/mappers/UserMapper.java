@@ -5,7 +5,7 @@ import com.newspring.delivery.dto.options_with_user.simple_dto.RoleDto;
 import com.newspring.delivery.dto.options_with_user.simple_dto.UserDto;
 import com.newspring.delivery.entities.*;
 
-import org.springframework.lang.NonNull;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -41,7 +41,7 @@ public class UserMapper {
 
     public AdvancedOrderResponse toAdvancedOrder(AdvancedOrderResponse order) {
         AdvancedOrderResponse res = new AdvancedOrderResponse();
-
+        res.setPrice(order.getPrice());
         res.setName(order.getName());
         res.setDescription(order.getDescription());
         res.setAddress(order.getAddress());
@@ -52,7 +52,7 @@ public class UserMapper {
         GetAllAdvancedOrderResponse res = new GetAllAdvancedOrderResponse();
         res.setStatus("OK");
         res.setOrders(orders.stream()
-        .map(order -> toAdvancedOrder(order))
+        .map(this::toAdvancedOrder)
                 .collect(Collectors.toList())
         );
         return res;

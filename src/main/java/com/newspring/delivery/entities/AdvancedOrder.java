@@ -11,4 +11,6 @@ public class AdvancedOrder {
    private String name;
    private String description;
    private String address;
+   private Double minPrice;
+   private Double maxPrice;
 }

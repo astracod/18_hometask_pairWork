@@ -148,5 +148,5 @@ public class UsersController {
 // 6) curl -XPOST http://localhost:8080/users/change -H"Content-Type:application/json" -d"{\"authorUserId\":2,\"name\":\"Milk\",\"description\":\"white milk\",\"address\":\"Kislovodsk, Vernadsky 5\",\"statusId\":1}"
 // 7) curl -XDELETE http://localhost:8080/users/remove -H "Content-Type:application/json" -d"{\"orderId\":5}"
 //  запросы из браузера
-// 3) curl -XGET http://localhost:8080/users/part?role=2&login=A
-// 8) curl -XGET http://localhost:8080/users/portion?name=ffe&description=ack&address=Kislo
+// 3)  http://localhost:8080/users/part?role=2&login=A
+// 8)  http://localhost:8080/users/portion?name=ffe&description=ack&address=Kislo
