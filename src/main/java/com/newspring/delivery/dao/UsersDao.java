@@ -11,7 +11,7 @@ public interface UsersDao {
 
     List<AdvancedOrderResponse> advancedOrderSearch(AdvancedOrder advancedOrder);
 
-    void remoteOrder(DeleteOrder deleteOrder);
+    void removeOrder(DeleteOrderRequest deleteOrder);
 
     void add(User user);
 

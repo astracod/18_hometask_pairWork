@@ -23,7 +23,7 @@ public class UsersController {
 
         OnlyStatusResponse response = new OnlyStatusResponse();
         try {
-            usersService.addUser(userMapper.toAddUser(user));
+            usersService.addUser(userMapper.toUser(user));
             response.setStatus(OnlyStatusResponse.Status.OK);
             response.setMessage(" -> добавление произведено");
         } catch (Exception e) {
@@ -65,8 +65,8 @@ public class UsersController {
     @GetMapping("/portion")
     public GetAllAdvancedOrderResponse allAdvancedOrderResponse(AdvancedOrder advancedOrder) {
         try {
-            log.info("response : {}", userMapper.toGetAllAdvancedOrder(usersService.advancedOrderSearch(advancedOrder)));
-            return userMapper.toGetAllAdvancedOrder(usersService.advancedOrderSearch(advancedOrder));
+            log.info("response : {}", userMapper.toAdvancedOrders(usersService.advancedOrderSearch(advancedOrder)));
+            return userMapper.toAdvancedOrders(usersService.advancedOrderSearch(advancedOrder));
         } catch (Exception e) {
             GetAllAdvancedOrderResponse response = new GetAllAdvancedOrderResponse();
             response.setStatus("ERROR");
@@ -110,7 +110,7 @@ public class UsersController {
     }
 
     @PutMapping("/change")
-    public OnlyStatusResponse changeOrder(@RequestBody ChangeOrder order) {
+    public OnlyStatusResponse ChangeOrderRequest(@RequestBody ChangeOrder order) {
         OnlyStatusResponse res = new OnlyStatusResponse();
         try {
             usersService.changeOrder(order);
@@ -125,7 +125,7 @@ public class UsersController {
     }
 
     @DeleteMapping("/remove")
-    public OnlyStatusResponse removeOrder(@RequestBody DeleteOrder deleteOrder) {
+    public OnlyStatusResponse removeOrder(@RequestBody DeleteOrderRequest deleteOrder) {
         OnlyStatusResponse res = new OnlyStatusResponse();
         try {
             usersService.removeOrder(deleteOrder);

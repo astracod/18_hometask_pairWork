@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdvancedOrder {
+   private Long orderId;
    private String name;
    private String description;
    private String address;

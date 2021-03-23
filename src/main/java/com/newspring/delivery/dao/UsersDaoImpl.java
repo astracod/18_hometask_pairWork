@@ -31,16 +31,17 @@ public class UsersDaoImpl implements UsersDao {
             "  and (r.id = :roleId or cast (:roleId as bigint) is null)";
     public static final String UPDATE_ROLE = "update users as u set role_id = :roleId where u.id = :id";
 
-    public static final String CREATE_ORDER = "insert into orders(author_user_id, executor_user_id, price, name, description, address, status_id)" +
-            " VALUES (:authorUserId, :executorUserId, :price, :name, :description, :address, :statusId)";
+    public static final String CREATE_ORDER = "insert into orders(author_user_id,  price, name, description, address, status_id)" +
+            " VALUES (:authorUserId,  :price, :name, :description, :address, :statusId)";
     public static final String CHANGE_ORDER = "update orders\n" +
             "set    name=:name,\n" +
             "    description=:description,\n" +
             "    address =:address\n" +
             "where id = :orderId and status_id = 1";
     public static final String DELETE_FROM_ORDERS_WHERE_ID_ORDER_ID = "DELETE FROM orders WHERE id = :orderId";
-    public static final String ADVANCE_ORDER = "select name,description,address,price from orders " +
-            "where ((name like :name or cast(:name as varchar(255)) is null)" +
+
+    public static final String ADVANCE_ORDER = "select id as \"orderId\", name,description,address,price from orders " +
+            "where  ((name like :name or cast(:name as varchar(255)) is null)" +
             "and (description like :description or cast(:description as varchar(255)) is null))" +
             "and (address like :address or cast(:address as varchar(255)) is null)" +
             "and ((price > :minPrice or cast(:minPrice as numeric) is null)" +
@@ -79,7 +80,7 @@ public class UsersDaoImpl implements UsersDao {
 
 
     @Override
-    public void remoteOrder(DeleteOrder deleteOrder) {
+    public void removeOrder(DeleteOrderRequest deleteOrder) {
         try {
             int a = jdbcTemplate.update(DELETE_FROM_ORDERS_WHERE_ID_ORDER_ID,
                     new BeanPropertySqlParameterSource(deleteOrder));

@@ -70,9 +70,9 @@ public class UsersService {
         }
     }
 
-    public void removeOrder(DeleteOrder deleteOrder) {
+    public void removeOrder(DeleteOrderRequest deleteOrder) {
         try {
-            usersDao.remoteOrder(deleteOrder);
+            usersDao.removeOrder(deleteOrder);
         } catch (Exception e) {
             log.info(" Error remove order in service {}", e.getMessage(), e);
         }

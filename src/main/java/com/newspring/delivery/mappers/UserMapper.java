@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class UserMapper {
 
 
-    public User toAddUser(AddUserRequest req) {
+    public User toUser(AddUserRequest req) {
         return new User(null, req.getLogin(), req.getPassword(), req.getRoleId(), req.getPhone());
     }
 
@@ -41,6 +41,7 @@ public class UserMapper {
 
     public AdvancedOrderResponse toAdvancedOrder(AdvancedOrderResponse order) {
         AdvancedOrderResponse res = new AdvancedOrderResponse();
+        res.setOrderId(order.getOrderId());
         res.setPrice(order.getPrice());
         res.setName(order.getName());
         res.setDescription(order.getDescription());
@@ -48,7 +49,7 @@ public class UserMapper {
         return res;
     }
 
-    public GetAllAdvancedOrderResponse toGetAllAdvancedOrder(List<AdvancedOrderResponse> orders) {
+    public GetAllAdvancedOrderResponse toAdvancedOrders(List<AdvancedOrderResponse> orders) {
         GetAllAdvancedOrderResponse res = new GetAllAdvancedOrderResponse();
         res.setStatus("OK");
         res.setOrders(orders.stream()

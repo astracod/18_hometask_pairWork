@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdvancedOrderResponse {
+    private Long orderId;
     private Double price;
     private String name;
     private String description;
