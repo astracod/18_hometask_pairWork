@@ -23,12 +23,7 @@ public class UserMapper {
         return new ChangeRoleOnUser(res.getId(), res.getRoleId());
     }
 
-    public RoleDto toRoleDto(Role role) {
-        RoleDto response = new RoleDto();
-        response.setId(role.getId());
-        response.setName(role.getName());
-        return response;
-    }
+
 
     public UserDto toUserDto(User user) {
         UserDto dto = new UserDto();
@@ -39,7 +34,16 @@ public class UserMapper {
         return dto;
     }
 
-    public AdvancedOrderResponse toAdvancedOrder(AdvancedOrderResponse order) {
+    public UsersWithStatusResponse toStatusResponse(List<User> users) {
+        UsersWithStatusResponse response = new UsersWithStatusResponse();
+        response.setStatus("OK");
+        response.setUsers(users.stream()
+                .map(this::toUserDto)
+                .collect(Collectors.toList()));
+        return response;
+    }
+
+/*    public AdvancedOrderResponse toAdvancedOrder(AdvancedOrderResponse order) {
         AdvancedOrderResponse res = new AdvancedOrderResponse();
         res.setOrderId(order.getOrderId());
         res.setPrice(order.getPrice());
@@ -47,9 +51,9 @@ public class UserMapper {
         res.setDescription(order.getDescription());
         res.setAddress(order.getAddress());
         return res;
-    }
+    }*/
 
-    public GetAllAdvancedOrderResponse toAdvancedOrders(List<AdvancedOrderResponse> orders) {
+/*    public GetAllAdvancedOrderResponse toAdvancedOrders(List<AdvancedOrderResponse> orders) {
         GetAllAdvancedOrderResponse res = new GetAllAdvancedOrderResponse();
         res.setStatus("OK");
         res.setOrders(orders.stream()
@@ -57,6 +61,21 @@ public class UserMapper {
                 .collect(Collectors.toList())
         );
         return res;
+    }*/
+
+
+    public GetAllAdvancedOrderResponse toAdvancedOrders(List<AdvancedOrderDto> orders) {
+        GetAllAdvancedOrderResponse res = new GetAllAdvancedOrderResponse();
+        res.setStatus("OK");
+        res.setOrders(orders);
+        return res;
+    }
+
+    public RoleDto toRoleDto(Role role) {
+        RoleDto response = new RoleDto();
+        response.setId(role.getId());
+        response.setName(role.getName());
+        return response;
     }
 
     public GetAllRolesResponse toAllRolesResponse(List<Role> roles) {
@@ -68,14 +87,7 @@ public class UserMapper {
         return response;
     }
 
-    public UsersWithStatusResponse toStatusResponse(List<User> users) {
-        UsersWithStatusResponse response = new UsersWithStatusResponse();
-        response.setStatus("OK");
-        response.setUsers(users.stream()
-                .map(this::toUserDto)
-                .collect(Collectors.toList()));
-        return response;
-    }
+
 
     public UserWithRoleDto toUserWithRoleDto(UserWithRole user) {
         UserWithRoleDto userWithRoleDto = new UserWithRoleDto();

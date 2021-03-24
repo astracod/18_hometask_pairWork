@@ -1,4 +1,4 @@
-package com.newspring.delivery.entities;
+package com.newspring.delivery.dto.options_with_user;
 
 
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetAllAdvancedOrderResponse {
-    List<AdvancedOrderResponse> orders;
+    List<AdvancedOrderDto> orders;
     private String status;
     private String error;
 }

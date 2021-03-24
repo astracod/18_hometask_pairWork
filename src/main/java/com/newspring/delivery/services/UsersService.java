@@ -1,7 +1,7 @@
 package com.newspring.delivery.services;
 
 import com.newspring.delivery.dao.UsersDaoImpl;
-import com.newspring.delivery.dto.options_with_user.GetAllRolesResponse;
+import com.newspring.delivery.dto.options_with_user.AdvancedOrderDto;
 import com.newspring.delivery.entities.*;
 import com.newspring.delivery.exceptions.ValidationException;
 import com.newspring.delivery.mappers.UserMapper;
@@ -39,11 +39,13 @@ public class UsersService {
             log.error("ERROR UPDATE ROLE IN SERVICE {}", e.getMessage(), e);
         }
     }
+//GetAllRolesResponse
 
-    public GetAllRolesResponse getAllRolesResponse() {
-        return userMapper.toAllRolesResponse(
+    public List<Role> getAllRolesResponse() {
+      /*  return userMapper.toAllRolesResponse(
                 usersDao.getAllRoles()
-        );
+        );*/
+        return usersDao.getAllRoles();
     }
 
     public List<UserWithRole> getUserWithRole(Long role, String loginStart) {
@@ -78,7 +80,7 @@ public class UsersService {
         }
     }
 
-    public List<AdvancedOrderResponse> advancedOrderSearch(AdvancedOrder advancedOrder) {
+    public List<AdvancedOrderDto> advancedOrderSearch(AdvancedOrder advancedOrder) {
         log.info("service : {}",usersDao.advancedOrderSearch(advancedOrder));
         return usersDao.advancedOrderSearch(advancedOrder);
     }

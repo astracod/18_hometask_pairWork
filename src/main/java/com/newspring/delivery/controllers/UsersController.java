@@ -52,7 +52,7 @@ public class UsersController {
     @GetMapping("/roles")
     public GetAllRolesResponse allRolesResponse() {
         try {
-            return usersService.getAllRolesResponse();
+            return userMapper.toAllRolesResponse(usersService.getAllRolesResponse());
         } catch (Exception e) {
             log.error("ERROR IN UsersController {}", e.getMessage(), e);
             GetAllRolesResponse response = new GetAllRolesResponse();

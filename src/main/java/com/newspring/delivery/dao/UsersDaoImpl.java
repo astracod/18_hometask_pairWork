@@ -1,6 +1,7 @@
 package com.newspring.delivery.dao;
 
 
+import com.newspring.delivery.dto.options_with_user.AdvancedOrderDto;
 import com.newspring.delivery.entities.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +34,13 @@ public class UsersDaoImpl implements UsersDao {
 
     public static final String CREATE_ORDER = "insert into orders(author_user_id,  price, name, description, address, status_id)" +
             " VALUES (:authorUserId,  :price, :name, :description, :address, :statusId)";
+
     public static final String CHANGE_ORDER = "update orders\n" +
             "set    name=:name,\n" +
             "    description=:description,\n" +
             "    address =:address\n" +
-            "where id = :orderId and status_id = 1";
+            "where id = cast(:orderId as bigint) and status_id = 1";
+
     public static final String DELETE_FROM_ORDERS_WHERE_ID_ORDER_ID = "DELETE FROM orders WHERE id = :orderId";
 
     public static final String ADVANCE_ORDER = "select id as \"orderId\", name,description,address,price from orders " +
@@ -69,6 +72,7 @@ public class UsersDaoImpl implements UsersDao {
                     CHANGE_ORDER,
                     new BeanPropertySqlParameterSource(changeOrder));
             if (a == 0) {
+                log.info("входные данные : {}",changeOrder);
                 log.info("Order cannot be changed");
             } else {
                 log.info("Change order successfully implemented");
@@ -134,7 +138,7 @@ public class UsersDaoImpl implements UsersDao {
 
 
     @Override
-    public List<AdvancedOrderResponse> advancedOrderSearch(AdvancedOrder advancedOrder) {
+    public List<AdvancedOrderDto> advancedOrderSearch(AdvancedOrder advancedOrder) {
         log.info(" входные данные : {}", advancedOrder);
         return jdbcTemplate.query(ADVANCE_ORDER,
                 new MapSqlParameterSource("name", advancedOrder.getName() == null ? null : "%" + advancedOrder.getName() + "%")
@@ -143,7 +147,7 @@ public class UsersDaoImpl implements UsersDao {
                         .addValue("minPrice", advancedOrder.getMinPrice())
                         .addValue("maxPrice", advancedOrder.getMaxPrice())
                 ,
-                new BeanPropertyRowMapper<>(AdvancedOrderResponse.class)
+                new BeanPropertyRowMapper<>(AdvancedOrderDto.class)
         );
     }
 }
