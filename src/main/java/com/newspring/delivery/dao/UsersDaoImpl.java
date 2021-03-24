@@ -21,7 +21,6 @@ import java.util.List;
 @Slf4j
 public class UsersDaoImpl implements UsersDao {
 
-    private UserMapper userMapper;
 
     public static final String INSERT_USER = "INSERT INTO users(login,password,role_id, phone) values (:login,:password,:roleId, :phone)";
     public static final String SELECT_ALL_FROM_ROLES = "SELECT id, name FROM roles";
@@ -76,7 +75,7 @@ public class UsersDaoImpl implements UsersDao {
                     CHANGE_ORDER,
                     new BeanPropertySqlParameterSource(changeOrder));
             if (a == 0) {
-                log.info("входные данные : {}",changeOrder);
+                log.info("входные данные : {}", changeOrder);
                 log.info("Order cannot be changed");
             } else {
                 log.info("Change order successfully implemented");
@@ -144,7 +143,7 @@ public class UsersDaoImpl implements UsersDao {
     @Override
     public List<AdvanceOrder> advancedOrderSearch(AdvanceOrdersFilters advancedOrder) {
         log.info(" входные данные : {}", advancedOrder);
-        return  jdbcTemplate.query(ADVANCE_ORDER,
+        return jdbcTemplate.query(ADVANCE_ORDER,
                 new MapSqlParameterSource("name", advancedOrder.getName() == null ? null : "%" + advancedOrder.getName() + "%")
                         .addValue("description", advancedOrder.getDescription() == null ? null : "%" + advancedOrder.getDescription() + "%")
                         .addValue("address", advancedOrder.getAddress() == null ? null : "%" + advancedOrder.getAddress() + "%")

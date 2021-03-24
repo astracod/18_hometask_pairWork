@@ -66,11 +66,10 @@ public class UsersController {
     @GetMapping("/portion")
     public AdvanceOrdersResponse allAdvancedOrderResponse(AdvanceOrderFiltersDto advancedOrder) {
         try {
-            AdvanceOrdersFilters advanceOrdersFilters = userMapper.toAdvanceOrdersFilters(advancedOrder);
             log.info("response : {}",
-                    userMapper.toAdvancedOrders(usersService.advancedOrderSearch(advanceOrdersFilters))
+                    userMapper.toAdvancedOrders(usersService.advancedOrderSearch(userMapper.toAdvanceOrdersFilters(advancedOrder)))
                     );
-            return userMapper.toAdvancedOrders(usersService.advancedOrderSearch(advanceOrdersFilters));
+            return userMapper.toAdvancedOrders(usersService.advancedOrderSearch(userMapper.toAdvanceOrdersFilters(advancedOrder)));
         } catch (Exception e) {
             AdvanceOrdersResponse response = new AdvanceOrdersResponse();
             response.setStatus("ERROR");
