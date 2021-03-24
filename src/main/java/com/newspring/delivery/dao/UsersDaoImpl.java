@@ -2,7 +2,9 @@ package com.newspring.delivery.dao;
 
 
 import com.newspring.delivery.dto.options_with_user.AdvancedOrderDto;
+import com.newspring.delivery.dto.options_with_user.AdvanceOrderFiltersDto;
 import com.newspring.delivery.entities.*;
+import com.newspring.delivery.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -18,6 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class UsersDaoImpl implements UsersDao {
+
+    private UserMapper userMapper;
 
     public static final String INSERT_USER = "INSERT INTO users(login,password,role_id, phone) values (:login,:password,:roleId, :phone)";
     public static final String SELECT_ALL_FROM_ROLES = "SELECT id, name FROM roles";
@@ -138,16 +142,16 @@ public class UsersDaoImpl implements UsersDao {
 
 
     @Override
-    public List<AdvancedOrderDto> advancedOrderSearch(AdvancedOrder advancedOrder) {
+    public List<AdvanceOrder> advancedOrderSearch(AdvanceOrdersFilters advancedOrder) {
         log.info(" входные данные : {}", advancedOrder);
-        return jdbcTemplate.query(ADVANCE_ORDER,
+        return  jdbcTemplate.query(ADVANCE_ORDER,
                 new MapSqlParameterSource("name", advancedOrder.getName() == null ? null : "%" + advancedOrder.getName() + "%")
                         .addValue("description", advancedOrder.getDescription() == null ? null : "%" + advancedOrder.getDescription() + "%")
                         .addValue("address", advancedOrder.getAddress() == null ? null : "%" + advancedOrder.getAddress() + "%")
                         .addValue("minPrice", advancedOrder.getMinPrice())
                         .addValue("maxPrice", advancedOrder.getMaxPrice())
                 ,
-                new BeanPropertyRowMapper<>(AdvancedOrderDto.class)
+                new BeanPropertyRowMapper<>(AdvanceOrder.class)
         );
     }
 }

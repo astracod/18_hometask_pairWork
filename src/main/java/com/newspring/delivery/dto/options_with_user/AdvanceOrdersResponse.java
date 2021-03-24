@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAllAdvancedOrderResponse {
+public class AdvanceOrdersResponse {
     List<AdvancedOrderDto> orders;
     private String status;
     private String error;

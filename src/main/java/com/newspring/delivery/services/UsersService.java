@@ -1,10 +1,9 @@
 package com.newspring.delivery.services;
 
 import com.newspring.delivery.dao.UsersDaoImpl;
-import com.newspring.delivery.dto.options_with_user.AdvancedOrderDto;
 import com.newspring.delivery.entities.*;
 import com.newspring.delivery.exceptions.ValidationException;
-import com.newspring.delivery.mappers.UserMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +17,6 @@ import java.util.List;
 @Slf4j
 public class UsersService {
     private final UsersDaoImpl usersDao;
-    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     public void addUser(User user) {
@@ -39,12 +37,10 @@ public class UsersService {
             log.error("ERROR UPDATE ROLE IN SERVICE {}", e.getMessage(), e);
         }
     }
-//GetAllRolesResponse
+
 
     public List<Role> getAllRolesResponse() {
-      /*  return userMapper.toAllRolesResponse(
-                usersDao.getAllRoles()
-        );*/
+
         return usersDao.getAllRoles();
     }
 
@@ -80,7 +76,7 @@ public class UsersService {
         }
     }
 
-    public List<AdvancedOrderDto> advancedOrderSearch(AdvancedOrder advancedOrder) {
+    public List<AdvanceOrder> advancedOrderSearch(AdvanceOrdersFilters advancedOrder) {
         log.info("service : {}",usersDao.advancedOrderSearch(advancedOrder));
         return usersDao.advancedOrderSearch(advancedOrder);
     }

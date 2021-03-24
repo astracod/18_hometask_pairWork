@@ -1,6 +1,7 @@
 package com.newspring.delivery.dao;
 
 import com.newspring.delivery.dto.options_with_user.AdvancedOrderDto;
+import com.newspring.delivery.dto.options_with_user.AdvanceOrderFiltersDto;
 import com.newspring.delivery.entities.*;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface UsersDao {
 
     void changeOrder(ChangeOrder changeOrder);
 
-    List<AdvancedOrderDto> advancedOrderSearch(AdvancedOrder advancedOrder);
+    List<AdvanceOrder> advancedOrderSearch(AdvanceOrdersFilters advancedOrder);
 
     void removeOrder(DeleteOrderRequest deleteOrder);
 

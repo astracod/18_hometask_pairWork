@@ -2,6 +2,7 @@ package com.newspring.delivery.controllers;
 
 import com.newspring.delivery.dto.common.OnlyStatusResponse;
 import com.newspring.delivery.dto.options_with_user.*;
+import com.newspring.delivery.dto.options_with_user.AdvanceOrderFiltersDto;
 import com.newspring.delivery.entities.*;
 import com.newspring.delivery.mappers.UserMapper;
 import com.newspring.delivery.services.UsersService;
@@ -63,12 +64,15 @@ public class UsersController {
     }
 
     @GetMapping("/portion")
-    public GetAllAdvancedOrderResponse allAdvancedOrderResponse(AdvancedOrder advancedOrder) {
+    public AdvanceOrdersResponse allAdvancedOrderResponse(AdvanceOrderFiltersDto advancedOrder) {
         try {
-            log.info("response : {}", userMapper.toAdvancedOrders(usersService.advancedOrderSearch(advancedOrder)));
-            return userMapper.toAdvancedOrders(usersService.advancedOrderSearch(advancedOrder));
+            AdvanceOrdersFilters advanceOrdersFilters = userMapper.toAdvanceOrdersFilters(advancedOrder);
+            log.info("response : {}",
+                    userMapper.toAdvancedOrders(usersService.advancedOrderSearch(advanceOrdersFilters))
+                    );
+            return userMapper.toAdvancedOrders(usersService.advancedOrderSearch(advanceOrdersFilters));
         } catch (Exception e) {
-            GetAllAdvancedOrderResponse response = new GetAllAdvancedOrderResponse();
+            AdvanceOrdersResponse response = new AdvanceOrdersResponse();
             response.setStatus("ERROR");
             response.setError(e.getMessage());
             log.info("response : {}", e.getMessage(), e);

@@ -24,7 +24,6 @@ public class UserMapper {
     }
 
 
-
     public UserDto toUserDto(User user) {
         UserDto dto = new UserDto();
         dto.setId(user.getId());
@@ -43,33 +42,37 @@ public class UserMapper {
         return response;
     }
 
-/*    public AdvancedOrderResponse toAdvancedOrder(AdvancedOrderResponse order) {
-        AdvancedOrderResponse res = new AdvancedOrderResponse();
-        res.setOrderId(order.getOrderId());
-        res.setPrice(order.getPrice());
-        res.setName(order.getName());
-        res.setDescription(order.getDescription());
-        res.setAddress(order.getAddress());
-        return res;
-    }*/
 
-/*    public GetAllAdvancedOrderResponse toAdvancedOrders(List<AdvancedOrderResponse> orders) {
-        GetAllAdvancedOrderResponse res = new GetAllAdvancedOrderResponse();
+
+    public AdvanceOrdersFilters toAdvanceOrdersFilters(AdvanceOrderFiltersDto advanceOrderFiltersDto) {
+        AdvanceOrdersFilters advanceOrdersFilters = new AdvanceOrdersFilters();
+        advanceOrdersFilters.setName(advanceOrderFiltersDto.getName());
+        advanceOrdersFilters.setDescription(advanceOrderFiltersDto.getDescription());
+        advanceOrdersFilters.setAddress(advanceOrderFiltersDto.getAddress());
+        advanceOrdersFilters.setMinPrice(advanceOrderFiltersDto.getMinPrice());
+        advanceOrdersFilters.setMaxPrice(advanceOrderFiltersDto.getMaxPrice());
+        return advanceOrdersFilters;
+    }
+
+
+    public AdvancedOrderDto toAdvancedOrderDto(AdvanceOrder advanceOrders) {
+        AdvancedOrderDto dto = new AdvancedOrderDto();
+        dto.setOrderId(advanceOrders.getOrderId());
+        dto.setPrice(advanceOrders.getPrice());
+        dto.setName(advanceOrders.getName());
+        dto.setDescription(advanceOrders.getDescription());
+        dto.setAddress(advanceOrders.getAddress());
+        return dto;
+    }
+
+    public AdvanceOrdersResponse toAdvancedOrders(List<AdvanceOrder> orders) {
+        AdvanceOrdersResponse res = new AdvanceOrdersResponse();
         res.setStatus("OK");
-        res.setOrders(orders.stream()
-        .map(this::toAdvancedOrder)
-                .collect(Collectors.toList())
+        res.setOrders(orders.stream().map(o -> toAdvancedOrderDto(o)).collect(Collectors.toList())
         );
         return res;
-    }*/
-
-
-    public GetAllAdvancedOrderResponse toAdvancedOrders(List<AdvancedOrderDto> orders) {
-        GetAllAdvancedOrderResponse res = new GetAllAdvancedOrderResponse();
-        res.setStatus("OK");
-        res.setOrders(orders);
-        return res;
     }
+
 
     public RoleDto toRoleDto(Role role) {
         RoleDto response = new RoleDto();
@@ -82,11 +85,10 @@ public class UserMapper {
         GetAllRolesResponse response = new GetAllRolesResponse();
         response.setStatus("OK");
         response.setRoles(roles.stream()
-                .map(this::toRoleDto)
+                .map(r -> toRoleDto(r))
                 .collect(Collectors.toList()));
         return response;
     }
-
 
 
     public UserWithRoleDto toUserWithRoleDto(UserWithRole user) {
