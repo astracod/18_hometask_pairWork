@@ -1,4 +1,4 @@
-package com.newspring.delivery.dto.options_with_user;
+package com.newspring.delivery.dto.optionsDto.ordersDto;
 
 
 import lombok.AllArgsConstructor;

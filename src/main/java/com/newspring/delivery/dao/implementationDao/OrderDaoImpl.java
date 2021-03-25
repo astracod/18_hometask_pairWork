@@ -1,10 +1,7 @@
-package com.newspring.delivery.dao;
+package com.newspring.delivery.dao.implementationDao;
 
-
-import com.newspring.delivery.dto.options_with_user.AdvancedOrderDto;
-import com.newspring.delivery.dto.options_with_user.AdvanceOrderFiltersDto;
-import com.newspring.delivery.entities.*;
-import com.newspring.delivery.mappers.UserMapper;
+import com.newspring.delivery.dao.interfaceDao.OrderDao;
+import com.newspring.delivery.entities.order.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -15,25 +12,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class UsersDaoImpl implements UsersDao {
+public class OrderDaoImpl implements OrderDao {
 
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public static final String INSERT_USER = "INSERT INTO users(login,password,role_id, phone) values (:login,:password,:roleId, :phone)";
-    public static final String SELECT_ALL_FROM_ROLES = "SELECT id, name FROM roles";
-    public static final String GET_ALL_USERS_WITH_ROLES = "select" +
-            "       u.id id, \n" +
-            "       u.login login,\n" +
-            "       r.id role_id,\n " +
-            "       r.name role_name\n" +
-            "from users u\n" +
-            "         left join roles r on u.role_id = r.id\n" +
-            "where (u.login like :loginStart or cast(:loginStart as varchar(255)) is null)\n" +
-            "  and (r.id = :roleId or cast (:roleId as bigint) is null)";
-    public static final String UPDATE_ROLE = "update users as u set role_id = :roleId where u.id = :id";
 
     public static final String CREATE_ORDER = "insert into orders(author_user_id,  price, name, description, address, status_id)" +
             " VALUES (:authorUserId,  :price, :name, :description, :address, :statusId)";
@@ -53,9 +38,6 @@ public class UsersDaoImpl implements UsersDao {
             "and ((price > :minPrice or cast(:minPrice as numeric) is null)" +
             "and (price < :maxPrice or cast(:maxPrice as numeric) is null))";
 
-    private final NamedParameterJdbcTemplate jdbcTemplate;
-
-
     @Override
     public void createOrder(Order order) {
         try {
@@ -66,7 +48,6 @@ public class UsersDaoImpl implements UsersDao {
             log.error("error in createOrder / UsersDaoImpl {}", e.getMessage(), e);
         }
     }
-
 
     @Override
     public void changeOrder(ChangeOrder changeOrder) {
@@ -85,61 +66,6 @@ public class UsersDaoImpl implements UsersDao {
         }
     }
 
-
-    @Override
-    public void removeOrder(DeleteOrderRequest deleteOrder) {
-        try {
-            int a = jdbcTemplate.update(DELETE_FROM_ORDERS_WHERE_ID_ORDER_ID,
-                    new BeanPropertySqlParameterSource(deleteOrder));
-            log.info("Delete in UserDaoImpl implemented");
-        } catch (Exception e) {
-            log.info("Error in Delete method / UserDaoImpl : {} ", e.getMessage(), e);
-        }
-
-
-    }
-
-    @Override
-    public void roleChange(ChangeRoleOnUser role) {
-        try {
-            jdbcTemplate.update(UPDATE_ROLE,
-                    new BeanPropertySqlParameterSource(role));
-            log.info("update in UserDaoImpl implemented");
-        } catch (Exception e) {
-            log.error(" error in update role in  roleChange / UsersDaoImpl");
-        }
-    }
-
-
-    @Override
-    public void add(User user) {
-        try {
-            jdbcTemplate.update(
-                    INSERT_USER,
-                    new BeanPropertySqlParameterSource(user));
-            log.info("ALL GOOD in UsersDaoImpl");
-        } catch (Exception e) {
-            log.error("ERROR ADD USER in UsersDaoImpl {}", e.getMessage());
-        }
-
-    }
-
-    @Override
-    public List<Role> getAllRoles() {
-        return jdbcTemplate.query(SELECT_ALL_FROM_ROLES,
-                new BeanPropertyRowMapper<>(Role.class));
-    }
-
-    @Override
-    public List<UserWithRole> getAllUsersByRoleAndLoginStart(Long role, String loginStart) {
-        return jdbcTemplate.query(GET_ALL_USERS_WITH_ROLES,
-                new MapSqlParameterSource("loginStart", loginStart == null ? null : loginStart + "%")
-                        .addValue("roleId", role)
-                ,
-                new BeanPropertyRowMapper<>(UserWithRole.class));
-    }
-
-
     @Override
     public List<AdvanceOrder> advancedOrderSearch(AdvanceOrdersFilters advancedOrder) {
         log.info(" входные данные : {}", advancedOrder);
@@ -153,14 +79,15 @@ public class UsersDaoImpl implements UsersDao {
                 new BeanPropertyRowMapper<>(AdvanceOrder.class)
         );
     }
+
+    @Override
+    public void removeOrder(DeleteOrderRequest deleteOrder) {
+        try {
+            int a = jdbcTemplate.update(DELETE_FROM_ORDERS_WHERE_ID_ORDER_ID,
+                    new BeanPropertySqlParameterSource(deleteOrder));
+            log.info("Delete in UserDaoImpl implemented");
+        } catch (Exception e) {
+            log.info("Error in Delete method / UserDaoImpl : {} ", e.getMessage(), e);
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-

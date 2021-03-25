@@ -1,7 +1,10 @@
 package com.newspring.delivery.services;
 
-import com.newspring.delivery.dao.UsersDaoImpl;
-import com.newspring.delivery.entities.*;
+import com.newspring.delivery.dao.implementationDao.UsersDaoImpl;
+import com.newspring.delivery.entities.user.ChangeRoleOnUser;
+import com.newspring.delivery.entities.user.Role;
+import com.newspring.delivery.entities.user.User;
+import com.newspring.delivery.entities.user.UserWithRole;
 import com.newspring.delivery.exceptions.ValidationException;
 
 import lombok.RequiredArgsConstructor;
@@ -38,9 +41,7 @@ public class UsersService {
         }
     }
 
-
     public List<Role> getAllRolesResponse() {
-
         return usersDao.getAllRoles();
     }
 
@@ -50,35 +51,4 @@ public class UsersService {
         }
         return usersDao.getAllUsersByRoleAndLoginStart(role, loginStart);
     }
-
-    public void createOrder(Order order) {
-
-        try {
-            usersDao.createOrder(order);
-        } catch (Exception e) {
-            log.info(" Error create order in service {}", e.getMessage(), e);
-        }
-    }
-
-    public void changeOrder(ChangeOrder order) {
-        try {
-            usersDao.changeOrder(order);
-        } catch (Exception e) {
-            log.info(" Error change order in service {}", e.getMessage(), e);
-        }
-    }
-
-    public void removeOrder(DeleteOrderRequest deleteOrder) {
-        try {
-            usersDao.removeOrder(deleteOrder);
-        } catch (Exception e) {
-            log.info(" Error remove order in service {}", e.getMessage(), e);
-        }
-    }
-
-    public List<AdvanceOrder> advancedOrderSearch(AdvanceOrdersFilters advancedOrder) {
-        log.info("service : {}",usersDao.advancedOrderSearch(advancedOrder));
-        return usersDao.advancedOrderSearch(advancedOrder);
-    }
-
 }

@@ -1,6 +1,6 @@
-package com.newspring.delivery.dto.options_with_user;
+package com.newspring.delivery.dto.optionsDto.usersDto;
 
-import com.newspring.delivery.dto.options_with_user.simple_dto.RoleDto;
+import com.newspring.delivery.dto.optionsDto.simple_dto.RoleDto;
 import lombok.Data;
 
 import java.util.List;

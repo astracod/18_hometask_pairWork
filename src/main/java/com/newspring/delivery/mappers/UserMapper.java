@@ -1,11 +1,13 @@
 package com.newspring.delivery.mappers;
 
-import com.newspring.delivery.dto.options_with_user.*;
-import com.newspring.delivery.dto.options_with_user.simple_dto.RoleDto;
-import com.newspring.delivery.dto.options_with_user.simple_dto.UserDto;
-import com.newspring.delivery.entities.*;
+import com.newspring.delivery.dto.optionsDto.simple_dto.RoleDto;
+import com.newspring.delivery.dto.optionsDto.simple_dto.UserDto;
+import com.newspring.delivery.dto.optionsDto.usersDto.*;
 
-
+import com.newspring.delivery.entities.user.ChangeRoleOnUser;
+import com.newspring.delivery.entities.user.Role;
+import com.newspring.delivery.entities.user.User;
+import com.newspring.delivery.entities.user.UserWithRole;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -41,38 +43,6 @@ public class UserMapper {
                 .collect(Collectors.toList()));
         return response;
     }
-
-
-
-    public AdvanceOrdersFilters toAdvanceOrdersFilters(AdvanceOrderFiltersDto advanceOrderFiltersDto) {
-        AdvanceOrdersFilters advanceOrdersFilters = new AdvanceOrdersFilters();
-        advanceOrdersFilters.setName(advanceOrderFiltersDto.getName());
-        advanceOrdersFilters.setDescription(advanceOrderFiltersDto.getDescription());
-        advanceOrdersFilters.setAddress(advanceOrderFiltersDto.getAddress());
-        advanceOrdersFilters.setMinPrice(advanceOrderFiltersDto.getMinPrice());
-        advanceOrdersFilters.setMaxPrice(advanceOrderFiltersDto.getMaxPrice());
-        return advanceOrdersFilters;
-    }
-
-
-    public AdvancedOrderDto toAdvancedOrderDto(AdvanceOrder advanceOrders) {
-        AdvancedOrderDto dto = new AdvancedOrderDto();
-        dto.setOrderId(advanceOrders.getOrderId());
-        dto.setPrice(advanceOrders.getPrice());
-        dto.setName(advanceOrders.getName());
-        dto.setDescription(advanceOrders.getDescription());
-        dto.setAddress(advanceOrders.getAddress());
-        return dto;
-    }
-
-    public AdvanceOrdersResponse toAdvancedOrders(List<AdvanceOrder> orders) {
-        AdvanceOrdersResponse res = new AdvanceOrdersResponse();
-        res.setStatus("OK");
-        res.setOrders(orders.stream().map(o -> toAdvancedOrderDto(o)).collect(Collectors.toList())
-        );
-        return res;
-    }
-
 
     public RoleDto toRoleDto(Role role) {
         RoleDto response = new RoleDto();
