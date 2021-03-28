@@ -1,4 +1,4 @@
-package com.newspring.delivery.entities;
+package com.newspring.delivery.entities.user;
 
 import lombok.Data;
 

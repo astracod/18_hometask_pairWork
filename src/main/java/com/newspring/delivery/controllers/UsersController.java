@@ -1,8 +1,10 @@
 package com.newspring.delivery.controllers;
 
 import com.newspring.delivery.dto.common.OnlyStatusResponse;
-import com.newspring.delivery.dto.options_with_user.*;
-import com.newspring.delivery.entities.ChangeRoleOnUser;
+import com.newspring.delivery.dto.optionsDto.usersDto.AddUserRequest;
+import com.newspring.delivery.dto.optionsDto.usersDto.GetAllRolesResponse;
+import com.newspring.delivery.dto.optionsDto.usersDto.UserWithRoleResponse;
+import com.newspring.delivery.entities.user.ChangeRoleOnUser;
 import com.newspring.delivery.mappers.UserMapper;
 import com.newspring.delivery.services.UsersService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class UsersController {
 
         OnlyStatusResponse response = new OnlyStatusResponse();
         try {
-            usersService.addUserDao(userMapper.toAddUser(user));
+            usersService.addUser(userMapper.toUser(user));
             response.setStatus(OnlyStatusResponse.Status.OK);
             response.setMessage(" -> добавление произведено");
         } catch (Exception e) {
@@ -52,7 +54,7 @@ public class UsersController {
     @GetMapping("/roles")
     public GetAllRolesResponse allRolesResponse() {
         try {
-            return usersService.getAllRolesResponse();
+            return userMapper.toAllRolesResponse(usersService.getAllRolesResponse());
         } catch (Exception e) {
             log.error("ERROR IN UsersController {}", e.getMessage(), e);
             GetAllRolesResponse response = new GetAllRolesResponse();
@@ -82,5 +84,7 @@ public class UsersController {
 // Запросы for Bash:
 // 1) curl -XPOST http://localhost:8080/users/add -H"Content-Type:application/json" -d'{"login":"Dima","password":"369852","roleId":2,"phone":"222111"}'
 // 2) curl -XGET http://localhost:8080/users/roles
-// 3) curl -XGET http://localhost:8080/users/part?role=2&login=A
+// Запросы в идеи
 // 4) curl -XPOST http://localhost:8080/users/up -H"Content-Type:application/json" -d"{\"id\":2,\"roleId\":2}" для консоли идеи.Разница во внешних кавычках.
+//  запросы из браузера
+// 3)  http://localhost:8080/users/part?role=2&login=A

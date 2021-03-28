@@ -1,12 +1,13 @@
 package com.newspring.delivery.mappers;
 
-import com.newspring.delivery.dto.options_with_user.*;
-import com.newspring.delivery.dto.options_with_user.simple_dto.RoleDto;
-import com.newspring.delivery.dto.options_with_user.simple_dto.UserDto;
-import com.newspring.delivery.entities.ChangeRoleOnUser;
-import com.newspring.delivery.entities.Role;
-import com.newspring.delivery.entities.User;
-import com.newspring.delivery.entities.UserWithRole;
+import com.newspring.delivery.dto.optionsDto.simple_dto.RoleDto;
+import com.newspring.delivery.dto.optionsDto.simple_dto.UserDto;
+import com.newspring.delivery.dto.optionsDto.usersDto.*;
+
+import com.newspring.delivery.entities.user.ChangeRoleOnUser;
+import com.newspring.delivery.entities.user.Role;
+import com.newspring.delivery.entities.user.User;
+import com.newspring.delivery.entities.user.UserWithRole;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,19 +17,14 @@ import java.util.stream.Collectors;
 public class UserMapper {
 
 
-    public User toAddUser(AddUserRequest req) {
+    public User toUser(AddUserRequest req) {
         return new User(null, req.getLogin(), req.getPassword(), req.getRoleId(), req.getPhone());
     }
-    public ChangeRoleOnUser toUpdateRole(UserRoleUpdateResponse res ){
-        return new ChangeRoleOnUser(res.getId(),res.getRoleId());
+
+    public ChangeRoleOnUser toUpdateRole(UserRoleUpdateResponse res) {
+        return new ChangeRoleOnUser(res.getId(), res.getRoleId());
     }
 
-    public RoleDto toRoleDto(Role role) {
-        RoleDto response = new RoleDto();
-        response.setId(role.getId());
-        response.setName(role.getName());
-        return response;
-    }
 
     public UserDto toUserDto(User user) {
         UserDto dto = new UserDto();
@@ -39,15 +35,6 @@ public class UserMapper {
         return dto;
     }
 
-    public GetAllRolesResponse toAllRolesResponse(List<Role> roles) {
-        GetAllRolesResponse response = new GetAllRolesResponse();
-        response.setStatus("OK");
-        response.setRoles(roles.stream()
-                .map(this::toRoleDto)
-                .collect(Collectors.toList()));
-        return response;
-    }
-
     public UsersWithStatusResponse toStatusResponse(List<User> users) {
         UsersWithStatusResponse response = new UsersWithStatusResponse();
         response.setStatus("OK");
@@ -56,6 +43,23 @@ public class UserMapper {
                 .collect(Collectors.toList()));
         return response;
     }
+
+    public RoleDto toRoleDto(Role role) {
+        RoleDto response = new RoleDto();
+        response.setId(role.getId());
+        response.setName(role.getName());
+        return response;
+    }
+
+    public GetAllRolesResponse toAllRolesResponse(List<Role> roles) {
+        GetAllRolesResponse response = new GetAllRolesResponse();
+        response.setStatus("OK");
+        response.setRoles(roles.stream()
+                .map(r -> toRoleDto(r))
+                .collect(Collectors.toList()));
+        return response;
+    }
+
 
     public UserWithRoleDto toUserWithRoleDto(UserWithRole user) {
         UserWithRoleDto userWithRoleDto = new UserWithRoleDto();

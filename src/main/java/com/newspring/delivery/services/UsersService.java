@@ -1,12 +1,12 @@
 package com.newspring.delivery.services;
 
-import com.newspring.delivery.dao.UsersDaoImpl;
-import com.newspring.delivery.dto.options_with_user.GetAllRolesResponse;
-import com.newspring.delivery.entities.ChangeRoleOnUser;
-import com.newspring.delivery.entities.User;
-import com.newspring.delivery.entities.UserWithRole;
+import com.newspring.delivery.dao.implementationDao.UsersDaoImpl;
+import com.newspring.delivery.entities.user.ChangeRoleOnUser;
+import com.newspring.delivery.entities.user.Role;
+import com.newspring.delivery.entities.user.User;
+import com.newspring.delivery.entities.user.UserWithRole;
 import com.newspring.delivery.exceptions.ValidationException;
-import com.newspring.delivery.mappers.UserMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,10 +20,9 @@ import java.util.List;
 @Slf4j
 public class UsersService {
     private final UsersDaoImpl usersDao;
-    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public void addUserDao(User user) {
+    public void addUser(User user) {
         try {
             String hash = passwordEncoder.encode(user.getPassword());
             user.setPassword(hash);
@@ -42,10 +41,8 @@ public class UsersService {
         }
     }
 
-    public GetAllRolesResponse getAllRolesResponse() {
-        return userMapper.toAllRolesResponse(
-                usersDao.getAllRoles()
-        );
+    public List<Role> getAllRolesResponse() {
+        return usersDao.getAllRoles();
     }
 
     public List<UserWithRole> getUserWithRole(Long role, String loginStart) {
@@ -54,5 +51,4 @@ public class UsersService {
         }
         return usersDao.getAllUsersByRoleAndLoginStart(role, loginStart);
     }
-
 }
