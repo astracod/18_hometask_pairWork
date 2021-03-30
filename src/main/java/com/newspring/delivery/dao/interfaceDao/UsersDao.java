@@ -17,4 +17,6 @@ public interface UsersDao {
     List<UserWithRole> getAllUsersByRoleAndLoginStart(Long role, String LoginStart);
 
     List<Role> getAllRoles();
+
+
 }

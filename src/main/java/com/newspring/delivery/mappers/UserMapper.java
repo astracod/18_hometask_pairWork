@@ -4,10 +4,8 @@ import com.newspring.delivery.dto.optionsDto.simple_dto.RoleDto;
 import com.newspring.delivery.dto.optionsDto.simple_dto.UserDto;
 import com.newspring.delivery.dto.optionsDto.usersDto.*;
 
-import com.newspring.delivery.entities.user.ChangeRoleOnUser;
-import com.newspring.delivery.entities.user.Role;
-import com.newspring.delivery.entities.user.User;
-import com.newspring.delivery.entities.user.UserWithRole;
+import com.newspring.delivery.entities.user.*;
+import com.newspring.delivery.token.JwtImpl;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -76,5 +74,38 @@ public class UserMapper {
         users1.setUsers(users.stream().map(u -> toUserWithRoleDto(u)).collect(Collectors.toList()));
         return users1;
     }
+
+    public UserFromToken toUserToken(LoginRequestDto loginRequestDto) {
+        UserFromToken user = new UserFromToken();
+        user.setLogin(loginRequestDto.getLogin());
+        user.setPass(loginRequestDto.getPass());
+        return user;
+    }
+
+    public LoginForTokenDto toLoginForTokenResponse(UserFromTokenAfterChecking user) {
+        LoginForTokenDto log = new LoginForTokenDto();
+        log.setId(user.getId());
+        log.setLogin(user.getLogin());
+        log.setRoleName(user.getRoleName());
+        log.setPass(user.getPass());
+        return log;
+    }
+
+ /*   public LoginForTokenResponse toTokenResponse(List<UserFromTokenAfterChecking> user){
+        LoginForTokenResponse res = new LoginForTokenResponse();
+        res.setMessages("OK");
+        res.setName(user.stream().map( m -> toLoginForTokenResponse(m)).collect(Collectors.toList()));
+        return res;
+    }*/
+
+    public LoginForTokenResponse toJwtTokenResponse(List<UserFromTokenAfterChecking> user) {
+        LoginForTokenResponse res = new LoginForTokenResponse();
+        JwtImpl impl = new JwtImpl(user);
+        res.setMessages("OK");
+        res.setName(user.stream().map(m -> toLoginForTokenResponse(m)).collect(Collectors.toList()));
+        res.setToken(impl.getToken());
+        return res;
+    }
+
 }
 

@@ -1,10 +1,8 @@
 package com.newspring.delivery.services;
 
 import com.newspring.delivery.dao.implementationDao.UsersDaoImpl;
-import com.newspring.delivery.entities.user.ChangeRoleOnUser;
-import com.newspring.delivery.entities.user.Role;
-import com.newspring.delivery.entities.user.User;
-import com.newspring.delivery.entities.user.UserWithRole;
+import com.newspring.delivery.dto.optionsDto.usersDto.LoginRequestDto;
+import com.newspring.delivery.entities.user.*;
 import com.newspring.delivery.exceptions.ValidationException;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +19,7 @@ import java.util.List;
 public class UsersService {
     private final UsersDaoImpl usersDao;
     private final PasswordEncoder passwordEncoder;
+
 
     public void addUser(User user) {
         try {
@@ -50,5 +49,18 @@ public class UsersService {
             throw new ValidationException(" Search parameters not passed");
         }
         return usersDao.getAllUsersByRoleAndLoginStart(role, loginStart);
+    }
+
+    public List<UserFromTokenAfterChecking> getUser(UserFromToken userFromToken) {
+        return usersDao.fetchByLogin(userFromToken);
+    }
+
+    public boolean validationСheck(List<UserFromTokenAfterChecking> u, LoginRequestDto loginRequestDto) {
+        String ab = loginRequestDto.getPass();
+        String ac = "";
+        for (UserFromTokenAfterChecking user : u) {
+            ac = user.getPass();
+        }
+        return passwordEncoder.matches(ab, ac);
     }
 }

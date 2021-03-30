@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdvanceOrderFiltersDto {
-   //private Long orderId;
    private String name;
    private String description;
    private String address;
