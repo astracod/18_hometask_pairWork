@@ -1,62 +1,72 @@
 package com.newspring.delivery.token;
 
+
+import com.newspring.delivery.dto.optionsDto.usersDto.LoginForTokenResponse;
 import com.newspring.delivery.entities.user.UserFromTokenAfterChecking;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+
+
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.codec.binary.Base64;
+import lombok.extern.slf4j.Slf4j;
 
-
-import java.nio.charset.StandardCharsets;
-import java.security.KeyPair;
-import java.util.Arrays;
 import java.util.List;
+
+import static com.newspring.delivery.configuration.SecurityConfig.key;
 
 
 @Data
+@Slf4j
 @RequiredArgsConstructor
 public class JwtImpl {
 
-
-    private String header;
-    private String payload;
-    private byte[] signature;
     private Long id;
     private String roleName;
+    private String ip;
 
-    public JwtImpl(List<UserFromTokenAfterChecking> u) {
-        this.header = "{\"alg\":\"HS256\"}";
-        this.payload = setPayload(u);
-    }
-
-    KeyPair keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256);
-
-    public String setPayload(List<UserFromTokenAfterChecking> u) {
-        for (UserFromTokenAfterChecking user : u) {
-            id = user.getId();
-            roleName = user.getRoleName();
-        }
-        return "{\"userId\":\"id\",\"roleName\":\"roleName\"}";
+    public JwtImpl(List<UserFromTokenAfterChecking> user) {
+        user.stream().forEach(u -> u.getId());
+        user.stream().forEach(u -> u.getRoleName());
     }
 
     public String getToken() {
-        String jws = "";
-        String encodedHeader = Arrays.toString(Base64.encodeBase64(getHeader().getBytes(StandardCharsets.UTF_8)));
-        String encodedClaims = Arrays.toString(Base64.encodeBase64(getPayload().getBytes(StandardCharsets.UTF_8)));
-        String concatenated = encodedHeader + "." + encodedClaims;
-        jws = Jwts.builder()
-                .setSubject(concatenated)
-                .signWith(keyPair.getPrivate())
+
+        Claims claims = Jwts.claims();
+        claims.put("userId", id);
+        claims.put("roleName", roleName);
+        claims.put("userIp", ip);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .signWith(key)
                 .compact();
-        return jws;
+
     }
 
-    public String qwerty() {
-        return String.valueOf(Jwts.parserBuilder()
-                .setSigningKey(keyPair.getPublic()) // <---- publicKey, not privateKey
-                .build()
-                .parseClaimsJws(getToken()));
+    /**
+     *  пробный, не проверенный. Не смог вызвать в контроллере
+     * @param user
+     * @return
+     */
+    public Jws<Claims> parseToken(LoginForTokenResponse user) {
+        Jws<Claims> jws = null;
+        String token = user.getToken();
+
+        try {
+            jws =  Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            Claims claims = jws.getBody();
+            log.info("id : {}", claims.get("userId"));
+            log.info("ip : {}", claims.get("roleName"));
+            log.info("ip : {}", claims.get("userIp"));
+        } catch (JwtException ex) {
+            ex.printStackTrace();
+        }
+        return jws;
     }
 }

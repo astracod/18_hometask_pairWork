@@ -8,5 +8,6 @@ public class UserFromTokenAfterChecking {
     private String login;
     private String pass;
     private String roleName;
+    private String ip;
     private String message;
 }

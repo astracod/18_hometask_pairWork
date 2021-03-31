@@ -91,18 +91,10 @@ public class UserMapper {
         return log;
     }
 
- /*   public LoginForTokenResponse toTokenResponse(List<UserFromTokenAfterChecking> user){
-        LoginForTokenResponse res = new LoginForTokenResponse();
-        res.setMessages("OK");
-        res.setName(user.stream().map( m -> toLoginForTokenResponse(m)).collect(Collectors.toList()));
-        return res;
-    }*/
-
     public LoginForTokenResponse toJwtTokenResponse(List<UserFromTokenAfterChecking> user) {
         LoginForTokenResponse res = new LoginForTokenResponse();
         JwtImpl impl = new JwtImpl(user);
         res.setMessages("OK");
-        res.setName(user.stream().map(m -> toLoginForTokenResponse(m)).collect(Collectors.toList()));
         res.setToken(impl.getToken());
         return res;
     }

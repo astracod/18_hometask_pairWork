@@ -55,12 +55,12 @@ public class UsersService {
         return usersDao.fetchByLogin(userFromToken);
     }
 
-    public boolean validationСheck(List<UserFromTokenAfterChecking> u, LoginRequestDto loginRequestDto) {
-        String ab = loginRequestDto.getPass();
-        String ac = "";
-        for (UserFromTokenAfterChecking user : u) {
-            ac = user.getPass();
+    public boolean validationСheck(List<UserFromTokenAfterChecking> user, LoginRequestDto loginRequestDto) {
+        String incoming = loginRequestDto.getPass();
+        String hach = "";
+        for (UserFromTokenAfterChecking userPart : user) {
+            hach = userPart.getPass();
         }
-        return passwordEncoder.matches(ab, ac);
+        return passwordEncoder.matches(incoming, hach);
     }
 }

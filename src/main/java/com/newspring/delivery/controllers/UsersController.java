@@ -6,12 +6,15 @@ import com.newspring.delivery.entities.user.ChangeRoleOnUser;
 import com.newspring.delivery.entities.user.UserFromTokenAfterChecking;
 import com.newspring.delivery.mappers.UserMapper;
 import com.newspring.delivery.services.UsersService;
-import com.newspring.delivery.token.JwtImpl;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -23,6 +26,7 @@ public class UsersController {
     private final UsersService usersService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+
 
     @PostMapping("/add")
     public OnlyStatusResponse addUser(@RequestBody AddUserRequest user) {
@@ -87,22 +91,29 @@ public class UsersController {
 
     @GetMapping("/token")
     public LoginForTokenResponse getUser(LoginRequestDto loginRequestDto) {
+
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+
+        String ip = request.getRemoteAddr();
+
+
         try {
             List<UserFromTokenAfterChecking> u = usersService.getUser(
                     userMapper.toUserToken(loginRequestDto));
 
-
             boolean asc = usersService.validationСheck(u, loginRequestDto);
-            if (asc) {
-                return userMapper.toJwtTokenResponse(
-                        usersService.getUser(
-                                userMapper.toUserToken(loginRequestDto)));
 
+            if (asc) {
+                List<UserFromTokenAfterChecking> checkings = usersService.getUser(userMapper.toUserToken(loginRequestDto));
+                checkings.stream().forEach(e -> e.setIp(ip));
+                LoginForTokenResponse login = userMapper.toJwtTokenResponse(checkings);
+                return login;
             } else {
                 LoginForTokenResponse login = new LoginForTokenResponse();
                 login.setMessages(" There is no such user");
                 return login;
             }
+
         } catch (Exception e) {
             log.error("UserController {}", e.getMessage(), e);
             LoginForTokenResponse login = new LoginForTokenResponse();
