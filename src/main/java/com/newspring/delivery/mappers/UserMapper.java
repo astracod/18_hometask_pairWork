@@ -16,7 +16,12 @@ public class UserMapper {
 
 
     public User toUser(AddUserRequest req) {
-        return new User(null, req.getLogin(), req.getPassword(), req.getRoleId(), req.getPhone());
+        User user = new User();
+        user.setLogin(req.getLogin());
+        user.setPassword(req.getPassword());
+        user.setRoleId(req.getRoleId());
+        user.setPhone(req.getPhone());
+        return user;
     }
 
     public ChangeRoleOnUser toUpdateRole(UserRoleUpdateResponse res) {
@@ -78,26 +83,27 @@ public class UserMapper {
     public UserFromToken toUserToken(LoginRequestDto loginRequestDto) {
         UserFromToken user = new UserFromToken();
         user.setLogin(loginRequestDto.getLogin());
-        user.setPass(loginRequestDto.getPass());
+        user.setPass(loginRequestDto.getPassword());
         return user;
     }
 
-    public LoginForTokenDto toLoginForTokenResponse(UserFromTokenAfterChecking user) {
+/*    public LoginForTokenDto toLoginForTokenResponse(UserFromTokenAfterChecking user) {
         LoginForTokenDto log = new LoginForTokenDto();
         log.setId(user.getId());
         log.setLogin(user.getLogin());
         log.setRoleName(user.getRoleName());
         log.setPass(user.getPass());
         return log;
-    }
+    }*/
 
-    public LoginForTokenResponse toJwtTokenResponse(List<UserFromTokenAfterChecking> user) {
+    public LoginForTokenResponse toJwtTokenResponse(User user) {
         LoginForTokenResponse res = new LoginForTokenResponse();
         JwtImpl impl = new JwtImpl(user);
         res.setMessages("OK");
         res.setToken(impl.getToken());
         return res;
     }
+
 
 }
 

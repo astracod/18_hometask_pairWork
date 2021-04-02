@@ -3,9 +3,10 @@ package com.newspring.delivery.controllers;
 import com.newspring.delivery.dto.common.OnlyStatusResponse;
 import com.newspring.delivery.dto.optionsDto.usersDto.*;
 import com.newspring.delivery.entities.user.ChangeRoleOnUser;
-import com.newspring.delivery.entities.user.UserFromTokenAfterChecking;
+import com.newspring.delivery.entities.user.User;
 import com.newspring.delivery.mappers.UserMapper;
 import com.newspring.delivery.services.UsersService;
+
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -98,16 +99,15 @@ public class UsersController {
 
 
         try {
-            List<UserFromTokenAfterChecking> u = usersService.getUser(
+            User u = usersService.getUser(
                     userMapper.toUserToken(loginRequestDto));
 
             boolean asc = usersService.validationСheck(u, loginRequestDto);
 
             if (asc) {
-                List<UserFromTokenAfterChecking> checkings = usersService.getUser(userMapper.toUserToken(loginRequestDto));
-                checkings.stream().forEach(e -> e.setIp(ip));
-                LoginForTokenResponse login = userMapper.toJwtTokenResponse(checkings);
-                return login;
+                User checkings = usersService.getUser(userMapper.toUserToken(loginRequestDto));
+                checkings.setIp(ip);
+                return userMapper.toJwtTokenResponse(checkings);
             } else {
                 LoginForTokenResponse login = new LoginForTokenResponse();
                 login.setMessages(" There is no such user");
@@ -131,3 +131,5 @@ public class UsersController {
 //  запросы из браузера
 // 3)  http://localhost:8080/users/part?role=2&login=A
 // http://localhost:8080/users/token?login=Dmitriy&pass=$2a$10$/ctpKbv6wEOE1NgHbPEFnuuvackBy/nXbQie2Gslf5U7wrySoGwxO
+//   запросы в Insomnia
+// http://localhost:8080/users/token?login=Dmitriy&password=333999

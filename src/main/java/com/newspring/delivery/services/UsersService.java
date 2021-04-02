@@ -1,6 +1,7 @@
 package com.newspring.delivery.services;
 
 import com.newspring.delivery.dao.implementationDao.UsersDaoImpl;
+
 import com.newspring.delivery.dto.optionsDto.usersDto.LoginRequestDto;
 import com.newspring.delivery.entities.user.*;
 import com.newspring.delivery.exceptions.ValidationException;
@@ -12,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -51,16 +54,17 @@ public class UsersService {
         return usersDao.getAllUsersByRoleAndLoginStart(role, loginStart);
     }
 
-    public List<UserFromTokenAfterChecking> getUser(UserFromToken userFromToken) {
+    public User getUser(UserFromToken userFromToken) {
         return usersDao.fetchByLogin(userFromToken);
     }
 
-    public boolean validationСheck(List<UserFromTokenAfterChecking> user, LoginRequestDto loginRequestDto) {
-        String incoming = loginRequestDto.getPass();
-        String hach = "";
-        for (UserFromTokenAfterChecking userPart : user) {
-            hach = userPart.getPass();
-        }
+    public boolean validationСheck(User user, LoginRequestDto loginRequestDto) {
+        String incoming = loginRequestDto.getPassword();
+        String hach = user.getPassword();
         return passwordEncoder.matches(incoming, hach);
     }
+
+/*    public String token(String name, String password){
+
+    }*/
 }

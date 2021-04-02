@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -22,7 +23,7 @@ public class UsersDaoImpl implements UsersDao {
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
-    public static final String SELECT_FROM_USERS_JWT = "select u.id as id, u.login as login, r.name AS roleName,  u.password as pass from users as u \n" +
+    public static final String SELECT_FROM_USERS_JWT = "select u.id as id, u.login as login, r.name AS roleName,  u.password as password from users as u \n" +
             "left join roles r on u.role_id = r.id \n" +
             "where u.login=:login";
     public static final String INSERT_USER = "INSERT INTO users(login,password,role_id, phone) values (:login,:password,:roleId, :phone)";
@@ -80,12 +81,19 @@ public class UsersDaoImpl implements UsersDao {
     }
 
 
-    public List<UserFromTokenAfterChecking> fetchByLogin(UserFromToken userFromToken) {
-        return jdbcTemplate.query(
+    public User fetchByLogin(UserFromToken userFromToken) {
+        List<User> users = jdbcTemplate.query(
                 SELECT_FROM_USERS_JWT,
                 new MapSqlParameterSource("login", userFromToken.getLogin())
                 ,
-                new BeanPropertyRowMapper<>(UserFromTokenAfterChecking.class));
+                new BeanPropertyRowMapper<>(User.class));
+
+        if (users.stream().findFirst().isPresent()) {
+            return users.stream().findFirst().orElse(null);
+        } else {
+            log.info("UserDaoImpl: {}", "Всё плохо");
+            return new User();
+        }
 
     }
 }

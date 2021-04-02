@@ -2,7 +2,7 @@ package com.newspring.delivery.token;
 
 
 import com.newspring.delivery.dto.optionsDto.usersDto.LoginForTokenResponse;
-import com.newspring.delivery.entities.user.UserFromTokenAfterChecking;
+import com.newspring.delivery.entities.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -27,13 +27,12 @@ public class JwtImpl {
     private String roleName;
     private String ip;
 
-    public JwtImpl(List<UserFromTokenAfterChecking> user) {
-        user.stream().forEach(u -> u.getId());
-        user.stream().forEach(u -> u.getRoleName());
+    public JwtImpl(User user) {
+        id = user.getId();
+        roleName = user.getRoleName();
     }
 
     public String getToken() {
-
         Claims claims = Jwts.claims();
         claims.put("userId", id);
         claims.put("roleName", roleName);
@@ -43,30 +42,31 @@ public class JwtImpl {
                 .setClaims(claims)
                 .signWith(key)
                 .compact();
-
     }
 
     /**
-     *  пробный, не проверенный. Не смог вызвать в контроллере
+     * пробный, не проверенный. Не смог вызвать в контроллере
+     *
      * @param user
      * @return
      */
-    public Jws<Claims> parseToken(LoginForTokenResponse user) {
+    public Claims parseToken(LoginForTokenResponse user) {
         Jws<Claims> jws = null;
+        Claims claims = null;
         String token = user.getToken();
 
         try {
-            jws =  Jwts.parserBuilder()
+            jws = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
-            Claims claims = jws.getBody();
-            log.info("id : {}", claims.get("userId"));
-            log.info("ip : {}", claims.get("roleName"));
-            log.info("ip : {}", claims.get("userIp"));
+            claims = jws.getBody();
+            claims.get("userId");
+            claims.get("roleName");
+            claims.get("userIp");
         } catch (JwtException ex) {
             ex.printStackTrace();
         }
-        return jws;
+        return claims;
     }
 }
