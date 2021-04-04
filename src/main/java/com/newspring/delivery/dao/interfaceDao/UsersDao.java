@@ -1,10 +1,7 @@
 package com.newspring.delivery.dao.interfaceDao;
 
 
-import com.newspring.delivery.entities.user.ChangeRoleOnUser;
-import com.newspring.delivery.entities.user.Role;
-import com.newspring.delivery.entities.user.User;
-import com.newspring.delivery.entities.user.UserWithRole;
+import com.newspring.delivery.entities.user.*;
 
 import java.util.List;
 
@@ -18,5 +15,5 @@ public interface UsersDao {
 
     List<Role> getAllRoles();
 
-
+    User findByLogin(String login);
 }

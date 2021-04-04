@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Repository
@@ -71,6 +70,7 @@ public class UsersDaoImpl implements UsersDao {
                 new BeanPropertyRowMapper<>(Role.class));
     }
 
+
     @Override
     public List<UserWithRole> getAllUsersByRoleAndLoginStart(Long role, String loginStart) {
         return jdbcTemplate.query(GET_ALL_USERS_WITH_ROLES,
@@ -80,22 +80,16 @@ public class UsersDaoImpl implements UsersDao {
                 new BeanPropertyRowMapper<>(UserWithRole.class));
     }
 
-
-    public User fetchByLogin(UserFromToken userFromToken) {
+    @Override
+    public User findByLogin(String login) {
         List<User> users = jdbcTemplate.query(
                 SELECT_FROM_USERS_JWT,
-                new MapSqlParameterSource("login", userFromToken.getLogin())
-                ,
-                new BeanPropertyRowMapper<>(User.class));
-
-        if (users.stream().findFirst().isPresent()) {
-            return users.stream().findFirst().orElse(null);
-        } else {
-            log.info("UserDaoImpl: {}", "Всё плохо");
-            return new User();
-        }
-
+                new MapSqlParameterSource("login", login),
+                new BeanPropertyRowMapper<>(User.class)
+        );
+        return users.stream().findFirst().orElse(null);
     }
+
 }
 
 

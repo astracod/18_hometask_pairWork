@@ -1,8 +1,8 @@
 package com.newspring.delivery.mappers;
 
-import com.newspring.delivery.dto.optionsDto.ordersDto.AdvanceOrderFiltersDto;
-import com.newspring.delivery.dto.optionsDto.ordersDto.AdvanceOrdersResponse;
-import com.newspring.delivery.dto.optionsDto.ordersDto.AdvancedOrderDto;
+import com.newspring.delivery.dto.options.orders.AdvanceOrderFiltersDto;
+import com.newspring.delivery.dto.options.orders.AdvanceOrdersResponse;
+import com.newspring.delivery.dto.options.orders.AdvancedOrderDto;
 import com.newspring.delivery.entities.order.AdvanceOrder;
 import com.newspring.delivery.entities.order.AdvanceOrdersFilters;
 import org.springframework.stereotype.Component;

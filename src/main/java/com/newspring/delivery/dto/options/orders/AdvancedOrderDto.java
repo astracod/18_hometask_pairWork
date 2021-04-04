@@ -1,4 +1,4 @@
-package com.newspring.delivery.dto.optionsDto.ordersDto;
+package com.newspring.delivery.dto.options.orders;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

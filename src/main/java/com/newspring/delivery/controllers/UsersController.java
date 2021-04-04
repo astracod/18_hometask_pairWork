@@ -1,22 +1,14 @@
 package com.newspring.delivery.controllers;
 
 import com.newspring.delivery.dto.common.OnlyStatusResponse;
-import com.newspring.delivery.dto.optionsDto.usersDto.*;
+import com.newspring.delivery.dto.options.users.*;
 import com.newspring.delivery.entities.user.ChangeRoleOnUser;
-import com.newspring.delivery.entities.user.User;
 import com.newspring.delivery.mappers.UserMapper;
+import com.newspring.delivery.services.AuthorizationService;
 import com.newspring.delivery.services.UsersService;
-
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 
 @RestController
@@ -26,10 +18,10 @@ import java.util.List;
 public class UsersController {
     private final UsersService usersService;
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthorizationService authorizationService;
 
 
-    @PostMapping("/add")
+    @PostMapping("/registration")
     public OnlyStatusResponse addUser(@RequestBody AddUserRequest user) {
 
         OnlyStatusResponse response = new OnlyStatusResponse();
@@ -90,36 +82,18 @@ public class UsersController {
         }
     }
 
-    @GetMapping("/token")
-    public LoginForTokenResponse getUser(LoginRequestDto loginRequestDto) {
-
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-
-        String ip = request.getRemoteAddr();
-
-
+    @PostMapping("/login")
+    public TokenResponse getUser(@RequestBody LoginRequest loginRequest) {
+        TokenResponse res = new TokenResponse();
         try {
-            User u = usersService.getUser(
-                    userMapper.toUserToken(loginRequestDto));
-
-            boolean asc = usersService.validationСheck(u, loginRequestDto);
-
-            if (asc) {
-                User checkings = usersService.getUser(userMapper.toUserToken(loginRequestDto));
-                checkings.setIp(ip);
-                return userMapper.toJwtTokenResponse(checkings);
-            } else {
-                LoginForTokenResponse login = new LoginForTokenResponse();
-                login.setMessages(" There is no such user");
-                return login;
-            }
-
+            String token = authorizationService.login(loginRequest.getLogin(), loginRequest.getPassword());
+            res.setStatus("OK");
+            res.setToken(token);
         } catch (Exception e) {
-            log.error("UserController {}", e.getMessage(), e);
-            LoginForTokenResponse login = new LoginForTokenResponse();
-            login.setMessages("ERROR in UserController");
-            return login;
+            res.setMessages(e.getMessage());
+            res.setStatus("Error");
         }
+        return res;
     }
 
 }
