@@ -1,26 +1,23 @@
 package com.newspring.delivery.services;
 
-import com.newspring.delivery.dao.implementationDao.UsersDaoImpl;
-import com.newspring.delivery.entities.user.ChangeRoleOnUser;
-import com.newspring.delivery.entities.user.Role;
-import com.newspring.delivery.entities.user.User;
-import com.newspring.delivery.entities.user.UserWithRole;
+import com.newspring.delivery.dao.interfaceDao.UsersDao;
+import com.newspring.delivery.entities.user.*;
 import com.newspring.delivery.exceptions.ValidationException;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UsersService {
-    private final UsersDaoImpl usersDao;
+    private final UsersDao usersDao;
     private final PasswordEncoder passwordEncoder;
+
 
     public void addUser(User user) {
         try {
@@ -51,4 +48,5 @@ public class UsersService {
         }
         return usersDao.getAllUsersByRoleAndLoginStart(role, loginStart);
     }
+
 }

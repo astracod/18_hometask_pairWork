@@ -1,6 +1,8 @@
 package com.newspring.delivery.configuration;
 
 
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,9 +10,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.crypto.SecretKey;
+
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    public final static SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     @Bean
     public PasswordEncoder passwordEncoder() {

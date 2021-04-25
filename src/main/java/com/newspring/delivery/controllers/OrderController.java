@@ -1,8 +1,8 @@
 package com.newspring.delivery.controllers;
 
 import com.newspring.delivery.dto.common.OnlyStatusResponse;
-import com.newspring.delivery.dto.optionsDto.ordersDto.AdvanceOrderFiltersDto;
-import com.newspring.delivery.dto.optionsDto.ordersDto.AdvanceOrdersResponse;
+import com.newspring.delivery.dto.options.orders.AdvanceOrderFiltersDto;
+import com.newspring.delivery.dto.options.orders.AdvanceOrdersResponse;
 import com.newspring.delivery.entities.order.ChangeOrder;
 import com.newspring.delivery.entities.order.DeleteOrderRequest;
 import com.newspring.delivery.entities.order.Order;

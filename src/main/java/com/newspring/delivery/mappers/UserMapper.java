@@ -1,9 +1,8 @@
 package com.newspring.delivery.mappers;
 
-import com.newspring.delivery.dto.optionsDto.simple_dto.RoleDto;
-import com.newspring.delivery.dto.optionsDto.simple_dto.UserDto;
-import com.newspring.delivery.dto.optionsDto.usersDto.*;
-
+import com.newspring.delivery.dto.options.simple.RoleDto;
+import com.newspring.delivery.dto.options.simple.UserDto;
+import com.newspring.delivery.dto.options.users.*;
 import com.newspring.delivery.entities.user.ChangeRoleOnUser;
 import com.newspring.delivery.entities.user.Role;
 import com.newspring.delivery.entities.user.User;
@@ -18,7 +17,12 @@ public class UserMapper {
 
 
     public User toUser(AddUserRequest req) {
-        return new User(null, req.getLogin(), req.getPassword(), req.getRoleId(), req.getPhone());
+        User user = new User();
+        user.setLogin(req.getLogin());
+        user.setPassword(req.getPassword());
+        user.setRoleId(req.getRoleId());
+        user.setPhone(req.getPhone());
+        return user;
     }
 
     public ChangeRoleOnUser toUpdateRole(UserRoleUpdateResponse res) {
@@ -76,5 +80,6 @@ public class UserMapper {
         users1.setUsers(users.stream().map(u -> toUserWithRoleDto(u)).collect(Collectors.toList()));
         return users1;
     }
+
 }
 

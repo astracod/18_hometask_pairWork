@@ -1,4 +1,4 @@
-package com.newspring.delivery.dto.optionsDto.simple_dto;
+package com.newspring.delivery.dto.options.simple;
 
 import lombok.Data;
 

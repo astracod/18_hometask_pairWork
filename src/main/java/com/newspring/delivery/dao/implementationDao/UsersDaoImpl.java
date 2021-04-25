@@ -2,10 +2,7 @@ package com.newspring.delivery.dao.implementationDao;
 
 
 import com.newspring.delivery.dao.interfaceDao.UsersDao;
-import com.newspring.delivery.entities.user.ChangeRoleOnUser;
-import com.newspring.delivery.entities.user.Role;
-import com.newspring.delivery.entities.user.User;
-import com.newspring.delivery.entities.user.UserWithRole;
+import com.newspring.delivery.entities.user.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -22,8 +19,12 @@ import java.util.List;
 @Slf4j
 public class UsersDaoImpl implements UsersDao {
 
+
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
+    public static final String SELECT_FROM_USERS_JWT = "select u.id as id, u.login as login, r.name AS roleName,  u.password as password from users as u \n" +
+            "left join roles r on u.role_id = r.id \n" +
+            "where u.login=:login";
     public static final String INSERT_USER = "INSERT INTO users(login,password,role_id, phone) values (:login,:password,:roleId, :phone)";
     public static final String SELECT_ALL_FROM_ROLES = "SELECT id, name FROM roles";
     public static final String GET_ALL_USERS_WITH_ROLES = "select" +
@@ -36,11 +37,6 @@ public class UsersDaoImpl implements UsersDao {
             "where (u.login like :loginStart or cast(:loginStart as varchar(255)) is null)\n" +
             "  and (r.id = :roleId or cast (:roleId as bigint) is null)";
     public static final String UPDATE_ROLE = "update users as u set role_id = :roleId where u.id = :id";
-
-
-
-
-
 
 
     @Override
@@ -74,6 +70,7 @@ public class UsersDaoImpl implements UsersDao {
                 new BeanPropertyRowMapper<>(Role.class));
     }
 
+
     @Override
     public List<UserWithRole> getAllUsersByRoleAndLoginStart(Long role, String loginStart) {
         return jdbcTemplate.query(GET_ALL_USERS_WITH_ROLES,
@@ -83,6 +80,15 @@ public class UsersDaoImpl implements UsersDao {
                 new BeanPropertyRowMapper<>(UserWithRole.class));
     }
 
+    @Override
+    public User findByLogin(String login) {
+        List<User> users = jdbcTemplate.query(
+                SELECT_FROM_USERS_JWT,
+                new MapSqlParameterSource("login", login),
+                new BeanPropertyRowMapper<>(User.class)
+        );
+        return users.stream().findFirst().orElse(null);
+    }
 
 }
 

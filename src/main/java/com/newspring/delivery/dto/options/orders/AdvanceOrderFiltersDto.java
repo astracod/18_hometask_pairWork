@@ -1,4 +1,4 @@
-package com.newspring.delivery.dto.optionsDto.ordersDto;
+package com.newspring.delivery.dto.options.orders;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdvanceOrderFiltersDto {
-   //private Long orderId;
    private String name;
    private String description;
    private String address;
