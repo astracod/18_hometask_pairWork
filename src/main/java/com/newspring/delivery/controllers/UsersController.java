@@ -20,7 +20,7 @@ public class UsersController {
     private final UserMapper userMapper;
     private final AuthorizationService authorizationService;
 
-
+// 26,04
     @PostMapping("/registration")
     public OnlyStatusResponse addUser(@RequestBody AddUserRequest user) {
 
