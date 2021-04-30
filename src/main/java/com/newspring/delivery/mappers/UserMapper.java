@@ -3,10 +3,7 @@ package com.newspring.delivery.mappers;
 import com.newspring.delivery.dto.options.simple.RoleDto;
 import com.newspring.delivery.dto.options.simple.UserDto;
 import com.newspring.delivery.dto.options.users.*;
-import com.newspring.delivery.entities.user.ChangeRoleOnUser;
-import com.newspring.delivery.entities.user.Role;
-import com.newspring.delivery.entities.user.User;
-import com.newspring.delivery.entities.user.UserWithRole;
+import com.newspring.delivery.entities.user.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,8 +13,8 @@ import java.util.stream.Collectors;
 public class UserMapper {
 
 
-    public User toUser(AddUserRequest req) {
-        User user = new User();
+    public Users toUser(AddUserRequest req) {
+        Users user = new Users();
         user.setLogin(req.getLogin());
         user.setPassword(req.getPassword());
         user.setRoleId(req.getRoleId());
@@ -47,15 +44,15 @@ public class UserMapper {
                 .collect(Collectors.toList()));
         return response;
     }
-
-    public RoleDto toRoleDto(Role role) {
+// изменил класс на Roles
+    public RoleDto toRoleDto(Roles role) {
         RoleDto response = new RoleDto();
         response.setId(role.getId());
         response.setName(role.getName());
         return response;
     }
-
-    public GetAllRolesResponse toAllRolesResponse(List<Role> roles) {
+    // изменил класс на Roles
+    public GetAllRolesResponse toAllRolesResponse(List<Roles> roles) {
         GetAllRolesResponse response = new GetAllRolesResponse();
         response.setStatus("OK");
         response.setRoles(roles.stream()
@@ -65,16 +62,18 @@ public class UserMapper {
     }
 
 
-    public UserWithRoleDto toUserWithRoleDto(UserWithRole user) {
+    public UserWithRoleDto toUserWithRoleDto(Users user) {
         UserWithRoleDto userWithRoleDto = new UserWithRoleDto();
         userWithRoleDto.setId(user.getId());
         userWithRoleDto.setLogin(user.getLogin());
+        userWithRoleDto.setPassword(user.getPassword());
+        userWithRoleDto.setPhone(user.getPhone());
         userWithRoleDto.setRoleId(user.getRoleId());
-        userWithRoleDto.setRoleName(user.getRoleName());
+        userWithRoleDto.setRoleName(user.getRoles().getName());
         return userWithRoleDto;
     }
 
-    public UserWithRoleResponse toUserWithRoleResponse(List<UserWithRole> users) {
+    public UserWithRoleResponse toUserWithRoleResponse(List<Users> users) {
         UserWithRoleResponse users1 = new UserWithRoleResponse();
         users1.setStatus("OK");
         users1.setUsers(users.stream().map(u -> toUserWithRoleDto(u)).collect(Collectors.toList()));

@@ -1,12 +1,14 @@
 package com.newspring.delivery.services;
 
-import com.newspring.delivery.dao.interfaceDao.UsersDao;
-import com.newspring.delivery.entities.user.*;
-import com.newspring.delivery.exceptions.ValidationException;
+import com.newspring.delivery.dao.interfaceDao.UsersRepository;
+import com.newspring.delivery.entities.user.ChangeRoleOnUser;
+import com.newspring.delivery.entities.user.Roles;
+import com.newspring.delivery.entities.user.Users;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,38 +17,48 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class UsersService {
-    private final UsersDao usersDao;
+
     private final PasswordEncoder passwordEncoder;
+    private final UsersRepository usersRepository;
 
-
-    public void addUser(User user) {
+    /**
+     *  UsersRepository
+     * @param user
+     */
+    @Transactional
+    public void addUser(Users user) {
         try {
             String hash = passwordEncoder.encode(user.getPassword());
             user.setPassword(hash);
-            usersDao.add(user);
+            usersRepository.save(user);
         } catch (Exception e) {
             log.error("ERROR ADD USER IN Service {}", e.getMessage());
             e.printStackTrace();
         }
     }
 
+    /**
+     *  UsersRepository
+     * @param role
+     */
     public void updateRole(ChangeRoleOnUser role) {
         try {
-            usersDao.roleChange(role);
+            usersRepository.roleChange(role.getId(), role.getRoleId());
         } catch (Exception e) {
             log.error("ERROR UPDATE ROLE IN SERVICE {}", e.getMessage(), e);
         }
     }
 
-    public List<Role> getAllRolesResponse() {
-        return usersDao.getAllRoles();
+
+    @Transactional
+    public List<Roles> getAllRolesResponse() {
+        return usersRepository.getAllRoles();
     }
 
-    public List<UserWithRole> getUserWithRole(Long role, String loginStart) {
-        if (loginStart == null && role == null) {
-            throw new ValidationException(" Search parameters not passed");
-        }
-        return usersDao.getAllUsersByRoleAndLoginStart(role, loginStart);
+
+    @Transactional
+    public List<Users> getUserWithRole(Long role, String loginStart) {
+        return usersRepository.getAllUsersByRoleAndLoginStart(role, loginStart);
     }
 
 }

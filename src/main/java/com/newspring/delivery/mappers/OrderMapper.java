@@ -5,8 +5,11 @@ import com.newspring.delivery.dto.options.orders.AdvanceOrdersResponse;
 import com.newspring.delivery.dto.options.orders.AdvancedOrderDto;
 import com.newspring.delivery.entities.order.AdvanceOrder;
 import com.newspring.delivery.entities.order.AdvanceOrdersFilters;
+import com.newspring.delivery.entities.order.ChangeOrder;
+import com.newspring.delivery.entities.order.Orders;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,21 +27,34 @@ public class OrderMapper {
     }
 
 
-    public AdvancedOrderDto toAdvancedOrderDto(AdvanceOrder advanceOrders) {
-        AdvancedOrderDto dto = new AdvancedOrderDto();
-        dto.setOrderId(advanceOrders.getOrderId());
-        dto.setPrice(advanceOrders.getPrice());
-        dto.setName(advanceOrders.getName());
-        dto.setDescription(advanceOrders.getDescription());
-        dto.setAddress(advanceOrders.getAddress());
+    public AdvanceOrder toAdvancedOrderDto(List<Orders> order) {
+        AdvanceOrder dto = new AdvanceOrder();
+        for (Orders entity : order) {
+            dto.setOrderId(entity.getId());
+            dto.setPrice(entity.getPrice());
+            dto.setName(entity.getName());
+            dto.setDescription(entity.getDescription());
+            dto.setAddress(entity.getAddress());
+        }
         return dto;
     }
 
-    public AdvanceOrdersResponse toAdvancedOrders(List<AdvanceOrder> orders) {
+    public AdvanceOrdersResponse toAdvancedOrders(List<Orders> orders) {
         AdvanceOrdersResponse res = new AdvanceOrdersResponse();
         res.setStatus("OK");
-        res.setOrders(orders.stream().map(o -> toAdvancedOrderDto(o)).collect(Collectors.toList())
+        res.setOrders(orders.stream().map(o -> toAdvancedOrderDto(Collections.singletonList(o))).collect(Collectors.toList())
         );
         return res;
+    }
+
+
+    public Orders toChangeOrderRequest(ChangeOrder order) {
+        Orders orders = new Orders();
+        orders.setId(order.getOrderId());
+        orders.setName(order.getName());
+        orders.setDescription(order.getDescription());
+        orders.setAddress(order.getAddress());
+        orders.setStatusId(order.getStatusId());
+        return orders;
     }
 }
