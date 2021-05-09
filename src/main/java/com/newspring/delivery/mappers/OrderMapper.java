@@ -27,22 +27,21 @@ public class OrderMapper {
     }
 
 
-    public AdvanceOrder toAdvancedOrderDto(List<Orders> order) {
+    public AdvanceOrder toAdvancedOrderDto(Orders order) {
         AdvanceOrder dto = new AdvanceOrder();
-        for (Orders entity : order) {
-            dto.setOrderId(entity.getId());
-            dto.setPrice(entity.getPrice());
-            dto.setName(entity.getName());
-            dto.setDescription(entity.getDescription());
-            dto.setAddress(entity.getAddress());
-        }
+            dto.setOrderId(order.getId());
+            dto.setPrice(order.getPrice());
+            dto.setName(order.getName());
+            dto.setDescription(order.getDescription());
+            dto.setAddress(order.getAddress());
+
         return dto;
     }
 
     public AdvanceOrdersResponse toAdvancedOrders(List<Orders> orders) {
         AdvanceOrdersResponse res = new AdvanceOrdersResponse();
         res.setStatus("OK");
-        res.setOrders(orders.stream().map(o -> toAdvancedOrderDto(Collections.singletonList(o))).collect(Collectors.toList())
+        res.setOrders(orders.stream().map(o -> toAdvancedOrderDto(o)).collect(Collectors.toList())
         );
         return res;
     }
