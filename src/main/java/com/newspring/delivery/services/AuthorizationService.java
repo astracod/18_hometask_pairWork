@@ -1,8 +1,6 @@
 package com.newspring.delivery.services;
 
-import com.newspring.delivery.dao.interfaceDao.UsersDao;
 import com.newspring.delivery.dao.interfaceDao.UsersRepository;
-import com.newspring.delivery.entities.user.User;
 import com.newspring.delivery.entities.user.Users;
 import com.newspring.delivery.exceptions.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;

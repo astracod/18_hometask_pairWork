@@ -22,6 +22,7 @@ public class OrderController {
 
     /**
      *  OrderRepository
+     *  -> требует сериализации Users!!!
      * @param name
      * @param description
      * @param address
