@@ -1,14 +1,18 @@
 package com.newspring.delivery.controllers;
 
+import com.newspring.delivery.dao.interfaceDao.UsersRepository;
 import com.newspring.delivery.dto.common.OnlyStatusResponse;
 import com.newspring.delivery.dto.options.users.*;
 import com.newspring.delivery.entities.user.ChangeRoleOnUser;
+import com.newspring.delivery.entities.user.Users;
 import com.newspring.delivery.mappers.UserMapper;
 import com.newspring.delivery.services.AuthorizationService;
 import com.newspring.delivery.services.UsersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -19,8 +23,14 @@ public class UsersController {
     private final UsersService usersService;
     private final UserMapper userMapper;
     private final AuthorizationService authorizationService;
+    private final UsersRepository usersRepository;
 
-
+    /**
+     * UsersRepository
+     *
+     * @param user
+     * @return
+     */
     @PostMapping("/registration")
     public OnlyStatusResponse addUser(@RequestBody AddUserRequest user) {
 
@@ -37,11 +47,17 @@ public class UsersController {
         return response;
     }
 
+    /**
+     * UsersRepository
+     *
+     * @param updateResponse
+     * @return
+     */
     @PostMapping("/up")
     public OnlyStatusResponse updateRole(@RequestBody ChangeRoleOnUser updateResponse) {
         OnlyStatusResponse res = new OnlyStatusResponse();
         try {
-            usersService.updateRole(updateResponse);
+            usersRepository.roleChange(updateResponse.getId(), updateResponse.getRoleId());
             res.setStatus(OnlyStatusResponse.Status.OK);
             res.setMessage(" -> обновление произведено");
         } catch (Exception e) {
@@ -52,10 +68,15 @@ public class UsersController {
         return res;
     }
 
+    /**
+     * UsersRepository
+     *
+     * @return
+     */
     @GetMapping("/roles")
     public GetAllRolesResponse allRolesResponse() {
         try {
-            return userMapper.toAllRolesResponse(usersService.getAllRolesResponse());
+            return userMapper.toAllRolesResponse(usersRepository.getAllRoles());
         } catch (Exception e) {
             log.error("ERROR IN UsersController {}", e.getMessage(), e);
             GetAllRolesResponse response = new GetAllRolesResponse();
@@ -65,12 +86,19 @@ public class UsersController {
         }
     }
 
+
+    /**
+     * UsersRepository
+     *
+     * @param role
+     * @param loginStart
+     * @return
+     */
     @GetMapping("/part")
     public UserWithRoleResponse allUserWithRole(
             @RequestParam(required = false) Long role,
             @RequestParam(value = "login", required = false) String loginStart
     ) {
-        log.info("role {}, login {} ", role, loginStart);
         try {
             return userMapper.toUserWithRoleResponse(usersService.getUserWithRole(role, loginStart));
         } catch (Exception e) {
@@ -82,6 +110,12 @@ public class UsersController {
         }
     }
 
+    /**
+     * UsersRepository
+     *
+     * @param loginRequest
+     * @return
+     */
     @PostMapping("/login")
     public TokenResponse getUser(@RequestBody LoginRequest loginRequest) {
         TokenResponse res = new TokenResponse();
