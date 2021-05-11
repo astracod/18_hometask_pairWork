@@ -4,15 +4,12 @@ import com.newspring.delivery.dao.interfaceDao.UsersRepository;
 import com.newspring.delivery.dto.common.OnlyStatusResponse;
 import com.newspring.delivery.dto.options.users.*;
 import com.newspring.delivery.entities.user.ChangeRoleOnUser;
-import com.newspring.delivery.entities.user.Users;
 import com.newspring.delivery.mappers.UserMapper;
 import com.newspring.delivery.services.AuthorizationService;
 import com.newspring.delivery.services.UsersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 @RestController

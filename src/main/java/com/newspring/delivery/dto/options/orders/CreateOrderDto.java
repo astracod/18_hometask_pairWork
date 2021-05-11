@@ -1,4 +1,4 @@
-package com.newspring.delivery.entities.order;
+package com.newspring.delivery.dto.options.orders;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,13 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
-  private Long orderId;
-  private Long authorUserId;
-  private Long executorUserId;
-  private Double price;
+public class CreateOrderDto {
   private String name;
   private String description;
+  private Double price;
   private String address;
-  private Long statusId;
 }

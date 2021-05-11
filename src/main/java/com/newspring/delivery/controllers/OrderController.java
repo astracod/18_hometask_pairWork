@@ -2,9 +2,9 @@ package com.newspring.delivery.controllers;
 
 import com.newspring.delivery.dto.common.OnlyStatusResponse;
 import com.newspring.delivery.dto.options.orders.AdvanceOrdersResponse;
+import com.newspring.delivery.dto.options.orders.CreateOrderDto;
 import com.newspring.delivery.entities.order.ChangeOrder;
 import com.newspring.delivery.entities.order.DeleteOrderRequest;
-import com.newspring.delivery.entities.order.Orders;
 import com.newspring.delivery.mappers.OrderMapper;
 import com.newspring.delivery.services.OrdersService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +21,9 @@ public class OrderController {
     private final OrderMapper orderMapper;
 
     /**
-     *  OrderRepository
-     *  -> требует сериализации Users!!!
+     * OrderRepository
+     * -> требует сериализации Users!!!
+     *
      * @param name
      * @param description
      * @param address
@@ -31,16 +32,16 @@ public class OrderController {
      * @return
      */
     @GetMapping("/portion")
-    public AdvanceOrdersResponse allAdvancedOrderResponse(@RequestParam(value = "name",required = false) String name,
-                                                          @RequestParam(value = "description",required = false) String description,
-                                                          @RequestParam(value = "address",required = false) String address,
-                                                          @RequestParam(value = "price",required = false) Double minPrice,
-                                                          @RequestParam(value = "price",required = false) Double maxPrice) {
+    public AdvanceOrdersResponse allAdvancedOrderResponse(@RequestParam(value = "name", required = false) String name,
+                                                          @RequestParam(value = "description", required = false) String description,
+                                                          @RequestParam(value = "address", required = false) String address,
+                                                          @RequestParam(value = "price", required = false) Double minPrice,
+                                                          @RequestParam(value = "price", required = false) Double maxPrice) {
         try {
             log.info("OrderControllerResponse : {}",
-                    orderMapper.toAdvancedOrders(ordersService.advancedOrderSearch(name,description,address,minPrice,maxPrice))
+                    orderMapper.toAdvancedOrders(ordersService.advancedOrderSearch(name, description, address, minPrice, maxPrice))
             );
-            return orderMapper.toAdvancedOrders(ordersService.advancedOrderSearch(name,description,address,minPrice,maxPrice));
+            return orderMapper.toAdvancedOrders(ordersService.advancedOrderSearch(name, description, address, minPrice, maxPrice));
         } catch (Exception e) {
             AdvanceOrdersResponse response = new AdvanceOrdersResponse();
             response.setStatus("ERROR");
@@ -52,15 +53,12 @@ public class OrderController {
 
     /**
      * OrderRepository
-     *
-     * @param order
-     * @return
      */
     @PostMapping("/create")
-    public OnlyStatusResponse createOrder(@RequestBody Orders order) {
+    public OnlyStatusResponse createOrder(@RequestBody CreateOrderDto createOrderDto) {
         OnlyStatusResponse res = new OnlyStatusResponse();
         try {
-            ordersService.createOrder(order);
+            ordersService.createOrder(orderMapper.toCreateOrder(createOrderDto));
             res.setStatus(OnlyStatusResponse.Status.OK);
             res.setMessage(" -> заявка созданна");
         } catch (Exception e) {
@@ -71,8 +69,11 @@ public class OrderController {
         return res;
     }
 
+    /*{"authorUserId":10,"executorUserId":null,"price":420,"name":"Presidentti Original","description":"black coffee","address":"Lermontov, Mira 36","statusId":2}*/
+
     /**
      * OrderRepository
+     *
      * @param order
      * @return
      */
@@ -93,6 +94,7 @@ public class OrderController {
 
     /**
      * OrderRepository
+     *
      * @param deleteOrder
      * @return
      */

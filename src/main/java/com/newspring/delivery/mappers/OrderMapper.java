@@ -2,14 +2,13 @@ package com.newspring.delivery.mappers;
 
 import com.newspring.delivery.dto.options.orders.AdvanceOrderFiltersDto;
 import com.newspring.delivery.dto.options.orders.AdvanceOrdersResponse;
-import com.newspring.delivery.dto.options.orders.AdvancedOrderDto;
+import com.newspring.delivery.dto.options.orders.CreateOrderDto;
 import com.newspring.delivery.entities.order.AdvanceOrder;
 import com.newspring.delivery.entities.order.AdvanceOrdersFilters;
 import com.newspring.delivery.entities.order.ChangeOrder;
 import com.newspring.delivery.entities.order.Orders;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,5 +54,22 @@ public class OrderMapper {
         orders.setAddress(order.getAddress());
         orders.setStatusId(order.getStatusId());
         return orders;
+    }
+
+    /**
+     *  обратить внимание на поля StatusId,AuthorUserId
+     * @param createOrderDto
+     * @return
+     */
+    public Orders toCreateOrder(CreateOrderDto createOrderDto){
+        Orders order = new Orders();
+        order.setAuthorUserId(10L);
+        order.setExecutorUserId(null);
+        order.setStatusId(2L);
+        order.setName(createOrderDto.getName());
+        order.setDescription(createOrderDto.getDescription());
+        order.setPrice(createOrderDto.getPrice());
+        order.setAddress(createOrderDto.getAddress());
+        return order;
     }
 }
