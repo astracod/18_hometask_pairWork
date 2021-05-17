@@ -5,10 +5,11 @@ import com.newspring.delivery.dto.common.OnlyStatusResponse;
 import com.newspring.delivery.dto.options.users.*;
 import com.newspring.delivery.entities.user.ChangeRoleOnUser;
 import com.newspring.delivery.mappers.UserMapper;
-import com.newspring.delivery.services.AuthorizationService;
+import com.newspring.delivery.security.AuthorizationService;
 import com.newspring.delivery.services.UsersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -29,6 +30,7 @@ public class UsersController {
      * @return
      */
     @PostMapping("/registration")
+    @PreAuthorize("hasAuthority(3)")
     public OnlyStatusResponse addUser(@RequestBody AddUserRequest user) {
 
         OnlyStatusResponse response = new OnlyStatusResponse();
@@ -51,6 +53,7 @@ public class UsersController {
      * @return
      */
     @PostMapping("/up")
+    @PreAuthorize("hasAuthority(3)")
     public OnlyStatusResponse updateRole(@RequestBody ChangeRoleOnUser updateResponse) {
         OnlyStatusResponse res = new OnlyStatusResponse();
         try {
@@ -66,11 +69,12 @@ public class UsersController {
     }
 
     /**
-     * UsersRepository
+     * UsersRepository, JpaRepository<Roles,Long>
      *
      * @return
      */
     @GetMapping("/roles")
+    @PreAuthorize("hasAuthority(3)")
     public GetAllRolesResponse allRolesResponse() {
         try {
             return userMapper.toAllRolesResponse(usersRepository.getAllRoles());
@@ -92,6 +96,7 @@ public class UsersController {
      * @return
      */
     @GetMapping("/part")
+    @PreAuthorize("hasAuthority(3)")
     public UserWithRoleResponse allUserWithRole(
             @RequestParam(required = false) Long role,
             @RequestParam(value = "login", required = false) String loginStart

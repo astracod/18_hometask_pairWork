@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AdvanceOrder {
     private Long orderId;
+    private Long authorId;
+    private String authorName;
+    private String authorPhone;
     private Double price;
     private String name;
     private String description;

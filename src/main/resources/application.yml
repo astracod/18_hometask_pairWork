@@ -4,4 +4,6 @@ spring:
     password: ""
     username: postgres
     driver-class-name: org.postgresql.Driver
-
+auth:
+  jwt:
+    secret: dsnbdfjivbdfjnvhsldmfbm160521dgjbndfjbdnfvmaskvnhgjdfyrilb52

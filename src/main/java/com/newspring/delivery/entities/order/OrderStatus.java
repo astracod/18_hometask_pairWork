@@ -1,6 +1,5 @@
 package com.newspring.delivery.entities.order;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,5 +18,5 @@ public class OrderStatus {
     private String name;
 
     @OneToOne(fetch = FetchType.EAGER)
-    private Orders orders;
+    private Order order;
 }

@@ -3,7 +3,7 @@ package com.newspring.delivery.services;
 import com.newspring.delivery.dao.interfaceDao.UsersRepository;
 import com.newspring.delivery.entities.user.ChangeRoleOnUser;
 import com.newspring.delivery.entities.user.Roles;
-import com.newspring.delivery.entities.user.Users;
+import com.newspring.delivery.entities.user.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -26,7 +27,7 @@ public class UsersService {
      * @param user
      */
     @Transactional
-    public void addUser(Users user) {
+    public void addUser(User user) {
         try {
             String hash = passwordEncoder.encode(user.getPassword());
             user.setPassword(hash);
@@ -57,8 +58,11 @@ public class UsersService {
 
 
     @Transactional
-    public List<Users> getUserWithRole(Long role, String loginStart) {
+    public List<User> getUserWithRole(Long role, String loginStart) {
         return usersRepository.getAllUsersByRoleAndLoginStart(role, loginStart);
     }
 
+    public Optional<User> getFindById(Long id){
+        return usersRepository.findById(id);
+    }
 }

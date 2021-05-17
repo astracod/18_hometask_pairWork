@@ -1,7 +1,6 @@
 package com.newspring.delivery.entities.order;
 
-import com.newspring.delivery.entities.user.Users;
-import lombok.Data;
+import com.newspring.delivery.entities.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +10,7 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "orders")
-public class Orders {
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,9 +37,10 @@ public class Orders {
             @JoinColumn(name = "author_user_id", referencedColumnName = "id", insertable = false, updatable = false),
             @JoinColumn(name = "executor_user_id", referencedColumnName = "id", insertable = false, updatable = false)
     })
-    private Users users;
+    private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_id", insertable = false,updatable = false)
     private OrderStatus orderStatus;
+
 }

@@ -17,5 +17,5 @@ public class Roles {
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "roles")
-    private List<Users> users;
+    private List<User> users;
 }

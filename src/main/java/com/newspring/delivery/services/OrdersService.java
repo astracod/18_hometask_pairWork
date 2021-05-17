@@ -2,7 +2,7 @@ package com.newspring.delivery.services;
 
 import com.newspring.delivery.dao.interfaceDao.OrderRepository;
 import com.newspring.delivery.entities.order.DeleteOrderRequest;
-import com.newspring.delivery.entities.order.Orders;
+import com.newspring.delivery.entities.order.Order;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,7 +18,7 @@ public class OrdersService {
 
     private final OrderRepository orderRepository;
 
-    public void changeOrder(Orders order) {
+    public void changeOrder(Order order) {
         try {
             orderRepository.changeOrder(order.getName(), order.getDescription(), order.getAddress(), order.getId());
         } catch (Exception e) {
@@ -38,12 +38,12 @@ public class OrdersService {
         }
     }
 
-    public List<Orders> advancedOrderSearch(String name, String description, String address, Double minPrice, Double maxPrice) {
+    public List<Order> advancedOrderSearch(String name, String description, String address, Double minPrice, Double maxPrice) {
         return orderRepository.advancedOrderSearch(name, description, address, minPrice, maxPrice);
     }
 
     @Transactional
-    public void createOrder(Orders order) {
+    public void createOrder(Order order) {
         try {
             orderRepository.save(order);
         } catch (Exception e) {
