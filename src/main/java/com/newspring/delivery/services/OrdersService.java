@@ -8,11 +8,13 @@ import com.newspring.delivery.mappers.OrderMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,12 +36,17 @@ public class OrdersService {
     @Transactional
     @Modifying
     public void removeOrder(DeleteOrderRequest deleteOrder) {
-        try {
-            Long id = deleteOrder.getOrderId();
-            orderRepository.deleteById(id);
+        Optional<Order> order = orderRepository.findById(deleteOrder.getOrderId());
+        Long statusId = order.get().getStatusId();
+        Long authorityUser = getAuthority();
+        if ((statusId == 1 && authorityUser == 1) || authorityUser == 3) {
+            try {
+                Long id = deleteOrder.getOrderId();
+                orderRepository.deleteById(id);
 
-        } catch (Exception e) {
-            log.info(" Error remove order in service {}", e.getMessage(), e);
+            } catch (Exception e) {
+                log.info(" Error remove order in service {}", e.getMessage(), e);
+            }
         }
     }
 
@@ -75,7 +82,9 @@ public class OrdersService {
     @Modifying
     public void takeOrderToWork(Long orderId) {
         Long executorUserId = getUserId();
+        Boolean auth = gettingAuthentication().stream().anyMatch(x -> x.equals("2"));
         try {
+            log.info("Proba: {}", auth);
             Order order = orderMapper.takeOrder(orderRepository.findByOrderId(orderId), executorUserId);
             order.setStatusId(changeStatusId(order.getStatusId(), getAuthority()));
             orderRepository.save(order);
@@ -95,9 +104,10 @@ public class OrdersService {
         );
     }
 
-
     /**
+     * ВНИМАНИЕ
      * внутренний метод для takeOrderToWork
+     * найти другой способ получения
      *
      * @return
      */
@@ -108,6 +118,20 @@ public class OrdersService {
     }
 
     /**
+     * ВНИМАНИЕ
+     * получение листа аутентификации пробное использование в методе takeOrderToWork
+     *
+     * @return
+     */
+    private List<String> gettingAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * ВНИМАНИЕ
      * внутренний метод для takeOrderToWork
      *
      * @param id
@@ -118,7 +142,7 @@ public class OrdersService {
         if (authority == 3) {
             id = 5L;
         } else if (authority == 2 && (id < 3)) {
-            id = id + 1;
+            id += 1;
         } else if (authority == 1 && id == 3) {
             id = 4L;
         }

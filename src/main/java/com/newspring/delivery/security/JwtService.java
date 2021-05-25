@@ -60,7 +60,7 @@ public class JwtService {
 
     /**
      *  AuthenticationProvider функционал метода возвращающего Authentication
-     *  UserDetailsService функционал возвращающий UserDetails (строка 57)
+     *  UserDetailsService функционал возвращающий UserDetails
      * @param token
      * @return
      */
