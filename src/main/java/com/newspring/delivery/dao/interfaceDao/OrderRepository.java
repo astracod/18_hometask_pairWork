@@ -37,4 +37,21 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                      @Param("description") String description,
                      @Param("address") String address,
                      @Param("orderId") Long orderId);
+
+    @Transactional
+    @Modifying
+    @Query(
+            value = "select o from Order o where o.statusId = 1"
+    )
+    List<Order> getAllOrdersWhereStatusIdOne();
+
+
+    @Transactional
+    @Modifying
+    @Query(
+            value="select o from Order o where o.id = :orderId"
+    )
+    List<Order> findByOrderId(@Param("orderId") Long orderId);
+
+
 }

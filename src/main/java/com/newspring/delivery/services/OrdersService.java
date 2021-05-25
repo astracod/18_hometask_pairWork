@@ -3,13 +3,17 @@ package com.newspring.delivery.services;
 import com.newspring.delivery.dao.interfaceDao.OrderRepository;
 import com.newspring.delivery.entities.order.DeleteOrderRequest;
 import com.newspring.delivery.entities.order.Order;
+import com.newspring.delivery.entities.order.OrderStatus;
+import com.newspring.delivery.mappers.OrderMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +21,7 @@ import java.util.List;
 public class OrdersService {
 
     private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
 
     public void changeOrder(Order order) {
         try {
@@ -38,16 +43,85 @@ public class OrdersService {
         }
     }
 
+    @Transactional
     public List<Order> advancedOrderSearch(String name, String description, String address, Double minPrice, Double maxPrice) {
-        return orderRepository.advancedOrderSearch(name, description, address, minPrice, maxPrice);
+        List<Order> orders = orderRepository.advancedOrderSearch(name, description, address, minPrice, maxPrice);
+        List<OrderStatus> list = orders.stream().map(Order::getOrderStatus).collect(Collectors.toList());
+        for (OrderStatus orderStatus : list) {
+            for (Order order : orders) {
+                if (order.getStatusId().equals(orderStatus.getId())) order.setOrderStatus(order.getOrderStatus());
+            }
+        }
+        return orders;
     }
 
     @Transactional
     public void createOrder(Order order) {
+        Long userId = getUserId();
         try {
+            order.setAuthorUserId(userId);
             orderRepository.save(order);
         } catch (Exception e) {
             log.info(" Error create order in service {}", e.getMessage(), e);
         }
+    }
+
+    public List<Order> returnAllNonExecutableOrders() {
+        return orderRepository.getAllOrdersWhereStatusIdOne();
+    }
+
+
+    @Transactional
+    @Modifying
+    public void takeOrderToWork(Long orderId) {
+        Long executorUserId = getUserId();
+        try {
+            Order order = orderMapper.takeOrder(orderRepository.findByOrderId(orderId), executorUserId);
+            order.setStatusId(changeStatusId(order.getStatusId(), getAuthority()));
+            orderRepository.save(order);
+        } catch (Exception e) {
+            log.info(" Error remove order in service {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * используется для определения id  пользователя
+     *
+     * @return
+     */
+    private Long getUserId() {
+        return Long.parseLong(
+                SecurityContextHolder.getContext().getAuthentication().getName()
+        );
+    }
+
+
+    /**
+     * внутренний метод для takeOrderToWork
+     *
+     * @return
+     */
+    private Long getAuthority() {
+        String a = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
+        Long badParse = Long.parseLong(a.replace("[", "").replace("]", ""));
+        return badParse;
+    }
+
+    /**
+     * внутренний метод для takeOrderToWork
+     *
+     * @param id
+     * @param authority
+     * @return
+     */
+    private Long changeStatusId(Long id, Long authority) {
+        if (authority == 3) {
+            id = 5L;
+        } else if (authority == 2 && (id < 3)) {
+            id = id + 1;
+        } else if (authority == 1 && id == 3) {
+            id = 4L;
+        }
+        return id;
     }
 }

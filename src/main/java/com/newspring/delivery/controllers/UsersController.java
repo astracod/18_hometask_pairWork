@@ -133,13 +133,3 @@ public class UsersController {
     }
 
 }
-// Запросы for Bash:
-// 1) curl -XPOST http://localhost:8080/users/add -H"Content-Type:application/json" -d'{"login":"Dima","password":"369852","roleId":2,"phone":"222111"}'
-// 2) curl -XGET http://localhost:8080/users/roles
-// Запросы в идеи
-// 4) curl -XPOST http://localhost:8080/users/up -H"Content-Type:application/json" -d"{\"id\":2,\"roleId\":2}" для консоли идеи.Разница во внешних кавычках.
-//  запросы из браузера
-// 3)  http://localhost:8080/users/part?role=2&login=A
-// http://localhost:8080/users/token?login=Dmitriy&pass=$2a$10$/ctpKbv6wEOE1NgHbPEFnuuvackBy/nXbQie2Gslf5U7wrySoGwxO
-//   запросы в Insomnia
-// http://localhost:8080/users/token?login=Dmitriy&password=333999

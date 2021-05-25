@@ -39,8 +39,23 @@ public class Order {
     })
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_id", insertable = false,updatable = false)
     private OrderStatus orderStatus;
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", authorUserId=" + authorUserId +
+                ", executorUserId=" + executorUserId +
+                ", price=" + price +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", address='" + address + '\'' +
+                ", statusId=" + statusId +
+                ", user=" + user +
+                ", orderStatus=" + orderStatus +
+                '}';
+    }
 }

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -62,7 +61,7 @@ public class UsersService {
         return usersRepository.getAllUsersByRoleAndLoginStart(role, loginStart);
     }
 
-    public Optional<User> getFindById(Long id){
-        return usersRepository.findById(id);
+    public User getFindById(Long id){
+        return usersRepository.findById(id).orElse(null);
     }
 }
