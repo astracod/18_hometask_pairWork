@@ -38,14 +38,17 @@ public class OrdersService {
     public void removeOrder(DeleteOrderRequest deleteOrder) {
         Optional<Order> order = orderRepository.findById(deleteOrder.getOrderId());
         Long statusId = order.get().getStatusId();
-        Long authorityUser = getAuthority();
-        if ((statusId == 1 && authorityUser == 1) || authorityUser == 3) {
-            try {
-                Long id = deleteOrder.getOrderId();
-                orderRepository.deleteById(id);
+        List<Long> authority = getUserAuthorities();
+        for (Long authorityUsers : authority) {
+            if ( authorityUsers == 3  || (statusId == 1 && authorityUsers == 1)  ) {
 
-            } catch (Exception e) {
-                log.info(" Error remove order in service {}", e.getMessage(), e);
+                try {
+                    Long id = deleteOrder.getOrderId();
+                    orderRepository.deleteById(id);
+
+                } catch (Exception e) {
+                    log.info(" Error remove order in service {}", e.getMessage(), e);
+                }
             }
         }
     }
@@ -82,16 +85,16 @@ public class OrdersService {
     @Modifying
     public void takeOrderToWork(Long orderId) {
         Long executorUserId = getUserId();
-        Boolean auth = gettingAuthentication().stream().anyMatch(x -> x.equals("2"));
+        List<Long> userAuthorities = getUserAuthorities();
         try {
-            log.info("Proba: {}", auth);
             Order order = orderMapper.takeOrder(orderRepository.findByOrderId(orderId), executorUserId);
-            order.setStatusId(changeStatusId(order.getStatusId(), getAuthority()));
+            userAuthorities.forEach(authority -> order.setStatusId(changeStatusId(order.getStatusId(), authority)));
             orderRepository.save(order);
         } catch (Exception e) {
             log.info(" Error remove order in service {}", e.getMessage(), e);
         }
     }
+
 
     /**
      * используется для определения id  пользователя
@@ -105,28 +108,15 @@ public class OrdersService {
     }
 
     /**
-     * ВНИМАНИЕ
-     * внутренний метод для takeOrderToWork
-     * найти другой способ получения
+     * получение листа аутентификации пробное использование в методе takeOrderToWork     *
      *
      * @return
      */
-    private Long getAuthority() {
-        String a = SecurityContextHolder.getContext().getAuthentication().getAuthorities().toString();
-        Long badParse = Long.parseLong(a.replace("[", "").replace("]", ""));
-        return badParse;
-    }
-
-    /**
-     * ВНИМАНИЕ
-     * получение листа аутентификации пробное использование в методе takeOrderToWork
-     *
-     * @return
-     */
-    private List<String> gettingAuthentication() {
+    private List<Long> getUserAuthorities() {
         return SecurityContextHolder.getContext().getAuthentication()
                 .getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
+                .map(Long::parseLong)
                 .collect(Collectors.toList());
     }
 
