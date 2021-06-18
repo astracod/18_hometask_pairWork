@@ -22,5 +22,11 @@ public class OrderStatus {
     @JoinColumn(name="status_id")
     private List<Order> orders;
 
-
+    @Override
+    public String toString() {
+        return "OrderStatus{" +
+                "id=" + id +
+                ", name='" + name +
+                '}';
+    }
 }

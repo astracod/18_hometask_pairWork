@@ -17,7 +17,7 @@ public class AdvanceOrder {
     private Long executorId;
     private String executorName;
     private String executorPhone;
-    private String OrderStatus;
+    private String orderStatus;
     private Double price;
     private String name;
     private String description;

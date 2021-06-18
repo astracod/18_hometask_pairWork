@@ -16,10 +16,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    @Column(name = "author_user_id")
-    private Long authorUserId;
-    @Column(name = "executor_user_id")
-    private Long executorUserId;
     @Column(name = "price")
     private Double price;
     @Column(name = "name")
@@ -28,33 +24,32 @@ public class Order {
     private String description;
     @Column(name = "address")
     private String address;
-    @Column(name = "status_id")
-    private Long statusId;
+ /*   @Column(name = "status_id")
+    private Long statusId;*/
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "author_user_id", referencedColumnName = "id")
+    private User customer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name = "author_user_id", referencedColumnName = "id", insertable = false, updatable = false),
-            @JoinColumn(name = "executor_user_id", referencedColumnName = "id", insertable = false, updatable = false)
-    })
-    private User user;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "executor_user_id", referencedColumnName = "id")
+    private User executor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "status_id", insertable = false,updatable = false)
+//, insertable = false, updatable = false
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "status_id", referencedColumnName = "id")
     private OrderStatus orderStatus;
 
     @Override
     public String toString() {
         return "Order{" +
                 "id=" + id +
-                ", authorUserId=" + authorUserId +
-                ", executorUserId=" + executorUserId +
                 ", price=" + price +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", address='" + address + '\'' +
-                ", statusId=" + statusId +
-                ", user=" + user +
+                ", customer=" + customer +
+                ", executor=" + executor +
                 ", orderStatus=" + orderStatus +
                 '}';
     }

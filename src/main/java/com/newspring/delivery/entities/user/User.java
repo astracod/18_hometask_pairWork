@@ -1,7 +1,6 @@
 package com.newspring.delivery.entities.user;
 
 import com.newspring.delivery.entities.order.Order;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +12,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "users")
-public class User implements Serializable {
+public class User  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -22,19 +21,25 @@ public class User implements Serializable {
     private String login;
     @Column(name = "password")
     private String password;
-    @Column(name = "role_id")
-    private Long roleId;
     @Column(name = "phone")
     private String phone;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id", insertable = false, updatable = false)
-    private Roles roles;
+    @JoinColumn(name = "role_id")
+    private Role role;
 
 
     @OneToMany(fetch = FetchType.LAZY)
     private List<Order> orders;
 
-
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", phone='" + phone +
+                '}';
+    }
 }

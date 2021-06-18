@@ -27,7 +27,7 @@ public class JwtService {
     public String getToken(User u) {
         Claims claims = Jwts.claims();
         claims.put("userId", u.getId());
-        claims.put("roleId", u.getRoleId());
+        claims.put("roleId", u.getRole().getId());
         claims.put("userIp", RequestUtils.getUserIp());
 
         return Jwts.builder()

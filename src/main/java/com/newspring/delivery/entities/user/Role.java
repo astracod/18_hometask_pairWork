@@ -1,13 +1,31 @@
 package com.newspring.delivery.entities.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+import javax.persistence.*;
+import java.util.List;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "roles")
 public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+    @Column(name = "name")
     private String name;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "role")
+    private List<User> users;
+
+    @Override
+    public String toString() {
+        return "Roles{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

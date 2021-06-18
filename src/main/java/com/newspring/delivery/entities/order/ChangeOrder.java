@@ -12,5 +12,4 @@ public class ChangeOrder {
   private String name;
   private String description;
   private String address;
-  private Long statusId;
 }

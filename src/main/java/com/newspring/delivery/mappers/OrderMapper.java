@@ -5,7 +5,6 @@ import com.newspring.delivery.dto.options.orders.AdvanceOrdersResponse;
 import com.newspring.delivery.dto.options.orders.CreateOrderDto;
 import com.newspring.delivery.entities.order.AdvanceOrder;
 import com.newspring.delivery.entities.order.AdvanceOrdersFilters;
-import com.newspring.delivery.entities.order.ChangeOrder;
 import com.newspring.delivery.entities.order.Order;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -27,12 +26,11 @@ public class OrderMapper {
         return advanceOrdersFilters;
     }
 
-
     public AdvanceOrder toAdvancedOrderDto(Order order) {
         AdvanceOrder dto = new AdvanceOrder();
         dto.setOrderId(order.getId());
-        dto.setAuthorId(order.getAuthorUserId());
-        dto.setExecutorId(order.getExecutorUserId());
+        dto.setAuthorId(order.getCustomer().getId());
+        dto.setExecutorId(order.getExecutor().getId());
         dto.setPrice(order.getPrice());
         dto.setName(order.getName());
         dto.setDescription(order.getDescription());
@@ -41,36 +39,40 @@ public class OrderMapper {
         return dto;
     }
 
+
     public AdvanceOrdersResponse toAdvancedOrders(List<Order> orders) {
         AdvanceOrdersResponse res = new AdvanceOrdersResponse();
         res.setStatus("OK");
-        res.setOrders(orders.stream().map(o -> toAdvancedOrderDto(o)).collect(Collectors.toList())
+        res.setOrders(orders.stream().map(this::toAdvancedOrderDto).collect(Collectors.toList())
         );
         return res;
     }
 
-
-    public Order toChangeOrderRequest(ChangeOrder order) {
-        Order orders = new Order();
-        orders.setId(order.getOrderId());
-        orders.setName(order.getName());
-        orders.setDescription(order.getDescription());
-        orders.setAddress(order.getAddress());
-        orders.setStatusId(order.getStatusId());
-        return orders;
+    public AdvanceOrder toOrdersWithStatusOneDto(Order order) {
+        AdvanceOrder dto = new AdvanceOrder();
+        dto.setOrderId(order.getId());
+        dto.setAuthorId(order.getCustomer().getId());
+        dto.setPrice(order.getPrice());
+        dto.setName(order.getName());
+        dto.setDescription(order.getDescription());
+        dto.setAddress(order.getAddress());
+        dto.setOrderStatus(order.getOrderStatus().getName());
+        return dto;
     }
 
-    /**
-     * обратить внимание на поля StatusId,AuthorUserId
-     *
-     * @param createOrderDto
-     * @return
-     */
+
+    public AdvanceOrdersResponse toOrdersWithStatusOne(List<Order> orders) {
+        AdvanceOrdersResponse res = new AdvanceOrdersResponse();
+        res.setStatus("OK");
+        res.setOrders(orders.stream().map(this::toOrdersWithStatusOneDto).collect(Collectors.toList())
+        );
+        return res;
+    }
+
     public Order toCreateOrder(CreateOrderDto createOrderDto) {
         Order order = new Order();
-        order.setAuthorUserId(null);
-        order.setExecutorUserId(null);
-        order.setStatusId(1L);
+        order.setCustomer(null);
+        order.setExecutor(null);
         order.setName(createOrderDto.getName());
         order.setDescription(createOrderDto.getDescription());
         order.setPrice(createOrderDto.getPrice());
@@ -78,13 +80,12 @@ public class OrderMapper {
         return order;
     }
 
-    public Order takeOrder(List<Order> orders, Long executorUserId) {
+    public Order takeOrder(List<Order> orders) {
         Order order = new Order();
         for (Order order1 : orders) {
             order.setId(order1.getId());
-            order.setAuthorUserId(order1.getAuthorUserId());
-            order.setExecutorUserId(executorUserId);
-            order.setStatusId(order1.getStatusId());
+            order.setCustomer(order1.getCustomer());
+            order.setOrderStatus(order1.getOrderStatus());
             order.setName(order1.getName());
             order.setDescription(order1.getDescription());
             order.setPrice(order1.getPrice());

@@ -1,9 +1,13 @@
 package com.newspring.delivery.services;
 
 import com.newspring.delivery.dao.interfaceDao.OrderRepository;
+import com.newspring.delivery.dao.interfaceDao.UsersRepository;
+import com.newspring.delivery.entities.order.ChangeOrder;
 import com.newspring.delivery.entities.order.DeleteOrderRequest;
 import com.newspring.delivery.entities.order.Order;
 import com.newspring.delivery.entities.order.OrderStatus;
+import com.newspring.delivery.entities.user.User;
+import com.newspring.delivery.exceptions.RequestProcessingException;
 import com.newspring.delivery.mappers.OrderMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,24 +28,30 @@ import java.util.stream.Collectors;
 public class OrdersService {
 
     private final OrderRepository orderRepository;
+    private final UsersRepository usersRepository;
     private final OrderMapper orderMapper;
 
-    public void changeOrder(Order order) {
-        try {
-            orderRepository.changeOrder(order.getName(), order.getDescription(), order.getAddress(), order.getId());
-        } catch (Exception e) {
-            log.info(" Error change order in service {}", e.getMessage(), e);
+    @Transactional
+    public void changeOrder(ChangeOrder orderChange) {
+
+        Order order = orderRepository.findById(orderChange.getOrderId())
+                .orElseThrow(() -> new RequestProcessingException("Order not found"));
+        if (order.getOrderStatus().getId() == 1) {
+            order.setName(orderChange.getName());
+            order.setDescription(orderChange.getDescription());
+            order.setAddress(orderChange.getAddress());
         }
+
     }
 
     @Transactional
     @Modifying
     public void removeOrder(DeleteOrderRequest deleteOrder) {
         Optional<Order> order = orderRepository.findById(deleteOrder.getOrderId());
-        Long statusId = order.get().getStatusId();
+        Long statusId = order.get().getOrderStatus().getId();
         List<Long> authority = getUserAuthorities();
         for (Long authorityUsers : authority) {
-            if ( authorityUsers == 3  || (statusId == 1 && authorityUsers == 1)  ) {
+            if (authorityUsers == 3 || (statusId == 1 && authorityUsers == 1)) {
 
                 try {
                     Long id = deleteOrder.getOrderId();
@@ -53,13 +64,19 @@ public class OrdersService {
         }
     }
 
+
     @Transactional
     public List<Order> advancedOrderSearch(String name, String description, String address, Double minPrice, Double maxPrice) {
+
         List<Order> orders = orderRepository.advancedOrderSearch(name, description, address, minPrice, maxPrice);
+
         List<OrderStatus> list = orders.stream().map(Order::getOrderStatus).collect(Collectors.toList());
+
         for (OrderStatus orderStatus : list) {
             for (Order order : orders) {
-                if (order.getStatusId().equals(orderStatus.getId())) order.setOrderStatus(order.getOrderStatus());
+                if (order.getOrderStatus().getId().equals(orderStatus.getId())) {
+                    order.setOrderStatus(orderStatus);
+                }
             }
         }
         return orders;
@@ -68,14 +85,20 @@ public class OrdersService {
     @Transactional
     public void createOrder(Order order) {
         Long userId = getUserId();
+        User user = new User();
+        OrderStatus orderStatus = new OrderStatus();
+        orderStatus.setId(1L);
+        user.setId(userId);
         try {
-            order.setAuthorUserId(userId);
+            order.setCustomer(user);
+            order.setOrderStatus(orderStatus);
             orderRepository.save(order);
         } catch (Exception e) {
             log.info(" Error create order in service {}", e.getMessage(), e);
         }
     }
 
+    @Transactional
     public List<Order> returnAllNonExecutableOrders() {
         return orderRepository.getAllOrdersWhereStatusIdOne();
     }
@@ -86,9 +109,17 @@ public class OrdersService {
     public void takeOrderToWork(Long orderId) {
         Long executorUserId = getUserId();
         List<Long> userAuthorities = getUserAuthorities();
+        OrderStatus orderStatus = new OrderStatus();
+
+        Order order = orderMapper.takeOrder(Collections.singletonList(orderRepository.findById(orderId).get()));
+        Optional<User> executorUser = usersRepository.findById(executorUserId);
+
         try {
-            Order order = orderMapper.takeOrder(orderRepository.findByOrderId(orderId), executorUserId);
-            userAuthorities.forEach(authority -> order.setStatusId(changeStatusId(order.getStatusId(), authority)));
+            for (Long userAuthority : userAuthorities) {
+                orderStatus.setId(changeStatusId(order.getOrderStatus().getId(), userAuthority));
+            }
+            order.setOrderStatus(orderStatus);
+            order.setExecutor(executorUser.get());
             orderRepository.save(order);
         } catch (Exception e) {
             log.info(" Error remove order in service {}", e.getMessage(), e);

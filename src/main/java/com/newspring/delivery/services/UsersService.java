@@ -1,9 +1,12 @@
 package com.newspring.delivery.services;
 
+import com.newspring.delivery.dao.interfaceDao.RolesRepository;
 import com.newspring.delivery.dao.interfaceDao.UsersRepository;
+import com.newspring.delivery.domains.UserRoles;
 import com.newspring.delivery.entities.user.ChangeRoleOnUser;
-import com.newspring.delivery.entities.user.Roles;
+import com.newspring.delivery.entities.user.Role;
 import com.newspring.delivery.entities.user.User;
+import com.newspring.delivery.exceptions.RequestProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,48 +23,59 @@ public class UsersService {
 
     private final PasswordEncoder passwordEncoder;
     private final UsersRepository usersRepository;
+    private final RolesRepository rolesRepository;
 
     /**
-     *  UsersRepository
+     * UsersRepository
+     *
      * @param user
      */
     @Transactional
     public void addUser(User user) {
         try {
+            Role customerRole = rolesRepository.findById(UserRoles.CUSTOMER.getId())
+                    .orElseThrow(() -> new RequestProcessingException("Role not found"));
             String hash = passwordEncoder.encode(user.getPassword());
+            user.setRole(customerRole);
             user.setPassword(hash);
             usersRepository.save(user);
-        } catch (Exception e) {
-            log.error("ERROR ADD USER IN Service {}", e.getMessage());
-            e.printStackTrace();
+        }catch (RequestProcessingException ex){
+            throw ex;
+        }catch (Exception e) {
+            throw new RequestProcessingException("Registration failed");
         }
     }
 
     /**
-     *  UsersRepository
-     * @param role
+     * UsersRepository
+     *
+     * @param roleChange
      */
-    public void updateRole(ChangeRoleOnUser role) {
-        try {
-            usersRepository.roleChange(role.getId(), role.getRoleId());
-        } catch (Exception e) {
-            log.error("ERROR UPDATE ROLE IN SERVICE {}", e.getMessage(), e);
-        }
+    @Transactional
+    public void updateRole(ChangeRoleOnUser roleChange) {
+        User user = usersRepository.findById(roleChange.getId())
+                .orElseThrow(() -> new RequestProcessingException("User not found"));
+
+        Role role = rolesRepository.findById(roleChange.getRoleId())
+                .orElseThrow(() -> new RequestProcessingException("Role not found"));
+
+        user.setRole(role);
     }
 
 
     @Transactional
-    public List<Roles> getAllRolesResponse() {
-        return usersRepository.getAllRoles();
+    public List<Role> getAllRoles() {
+        return rolesRepository.findAll();
     }
 
 
     @Transactional
-    public List<User> getUserWithRole(Long role, String loginStart) {
+    public List<User> searchUsers(Long role, String loginStart) {
         return usersRepository.getAllUsersByRoleAndLoginStart(role, loginStart);
     }
 
-    public User getFindById(Long id){
+    @Transactional
+    public User getFindById(Long id) {
         return usersRepository.findById(id).orElse(null);
     }
 }

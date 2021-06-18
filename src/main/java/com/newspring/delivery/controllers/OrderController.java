@@ -53,7 +53,6 @@ public class OrderController {
             AdvanceOrdersResponse response = new AdvanceOrdersResponse();
             response.setStatus("ERROR");
             response.setError(e.getMessage());
-            log.info("responseException : {}", e.getMessage(), e);
             return response;
         }
     }
@@ -68,7 +67,7 @@ public class OrderController {
     @PreAuthorize("hasAuthority(2) || hasAuthority(3)")
     public AdvanceOrdersResponse getAllOrdersWithStatusOne() {
         try {
-            AdvanceOrdersResponse advanceOrdersResponse = orderMapper.toAdvancedOrders(ordersService.returnAllNonExecutableOrders());
+            AdvanceOrdersResponse advanceOrdersResponse = orderMapper.toOrdersWithStatusOne(ordersService.returnAllNonExecutableOrders());
             returnWithNameAuthor(advanceOrdersResponse);
             return advanceOrdersResponse;
         } catch (Exception e) {
@@ -102,7 +101,7 @@ public class OrderController {
     /**
      * OrderRepository
      */
-    @PostMapping("/create")
+    @PostMapping("create")
     @PreAuthorize("hasAuthority(1) || hasAuthority(3)")
     public OnlyStatusResponse createOrder(@RequestBody CreateOrderDto createOrderDto) {
         OnlyStatusResponse res = new OnlyStatusResponse();
@@ -118,15 +117,8 @@ public class OrderController {
         return res;
     }
 
-            /*Сценарий
-        1 Петя разместил заказ
-        2 Вася увидел заказ и взял его в работу
-        3 Вася отметил что едет к клиенту
-        4 Вася отметил что доставил
-        5 Петя отметил что получил и поставил оценку*/
 
     @PostMapping("/take")
-    // @PreAuthorize("hasAuthority(2) || hasAuthority(3)")
     public OnlyStatusResponse takeTheOrderToWork(@RequestBody OrderIdToWorkDto orderIdToWorkDto) {
         OnlyStatusResponse res = new OnlyStatusResponse();
         try {
@@ -150,10 +142,10 @@ public class OrderController {
      */
     @PutMapping("/change")
     @PreAuthorize("hasAuthority(1) || hasAuthority(3)")
-    public OnlyStatusResponse ChangeOrderRequest(@RequestBody ChangeOrder order) {
+    public OnlyStatusResponse changeOrderRequest(@RequestBody ChangeOrder order) {
         OnlyStatusResponse res = new OnlyStatusResponse();
         try {
-            ordersService.changeOrder(orderMapper.toChangeOrderRequest(order));
+            ordersService.changeOrder(order);
             res.setStatus(OnlyStatusResponse.Status.OK);
             res.setMessage(" -> заявка обновлена");
         } catch (Exception e) {

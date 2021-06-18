@@ -16,7 +16,6 @@ public class UserMapper {
         User user = new User();
         user.setLogin(req.getLogin());
         user.setPassword(req.getPassword());
-        user.setRoleId(req.getRoleId());
         user.setPhone(req.getPhone());
         return user;
     }
@@ -25,15 +24,15 @@ public class UserMapper {
         return new ChangeRoleOnUser(res.getId(), res.getRoleId());
     }
 
-// изменил класс на Roles
-    public RoleDto toRoleDto(Roles role) {
+
+    public RoleDto toRoleDto(Role role) {
         RoleDto response = new RoleDto();
         response.setId(role.getId());
         response.setName(role.getName());
         return response;
     }
-    // изменил класс на Roles
-    public GetAllRolesResponse toAllRolesResponse(List<Roles> roles) {
+
+    public GetAllRolesResponse toAllRolesResponse(List<Role> roles) {
         GetAllRolesResponse response = new GetAllRolesResponse();
         response.setStatus("OK");
         response.setRoles(roles.stream()
@@ -49,8 +48,8 @@ public class UserMapper {
         userWithRoleDto.setLogin(user.getLogin());
         userWithRoleDto.setPassword(user.getPassword());
         userWithRoleDto.setPhone(user.getPhone());
-        userWithRoleDto.setRoleId(user.getRoleId());
-        userWithRoleDto.setRoleName(user.getRoles().getName());
+        userWithRoleDto.setRoleId(user.getRole().getId());
+        userWithRoleDto.setRoleName(user.getRole().getName());
         return userWithRoleDto;
     }
 
