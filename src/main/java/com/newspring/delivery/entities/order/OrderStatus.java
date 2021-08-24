@@ -1,10 +1,10 @@
 package com.newspring.delivery.entities.order;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,6 +18,15 @@ public class OrderStatus {
     @Column(name = "name")
     private String name;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    private Orders orders;
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name="status_id")
+    private List<Order> orders;
+
+    @Override
+    public String toString() {
+        return "OrderStatus{" +
+                "id=" + id +
+                ", name='" + name +
+                '}';
+    }
 }

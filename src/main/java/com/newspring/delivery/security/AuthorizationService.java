@@ -1,7 +1,7 @@
-package com.newspring.delivery.services;
+package com.newspring.delivery.security;
 
 import com.newspring.delivery.dao.interfaceDao.UsersRepository;
-import com.newspring.delivery.entities.user.Users;
+import com.newspring.delivery.entities.user.User;
 import com.newspring.delivery.exceptions.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class AuthorizationService {
     private final UsersRepository usersRepository;
 
     public String login(String login, String pass) throws InvalidCredentialsException {
-        Users u = usersRepository.findByLogin(login);
+        User u = usersRepository.findByLogin(login);
         if (u == null) {
             throw new InvalidCredentialsException();
         }
